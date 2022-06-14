@@ -1,0 +1,15 @@
+[package]
+name = "SCALE-testing-interface"
+version = "0.1.0"
+authors = ["Robert Hambrock <robert@web3.foundation>"]
+edition = "2018"
+
+[dependencies]
+parity-scale-codec = { version = "3.1.2" , default-features = false, features = ["derive", "full"]}
+libc = { version = "0.2.94" }
+hex = { version = "0.4.3" }
+
+[lib]
+name = "scale_ffi"
+crate-type = ["cdylib"]
+
