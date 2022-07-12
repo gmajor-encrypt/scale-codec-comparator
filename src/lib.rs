@@ -18,7 +18,7 @@ pub extern "C" fn rustdemo(name: *const libc::c_char) -> *const libc::c_char {
 
 // https://docs.substrate.io/v3/advanced/scale-codec/
 // Fixed-width integers     https://docs.substrate.io/v3/advanced/scale-codec/#fixed-width-integers
-// input t=[u8; 4] [1,2,3,4] & FixedLenght 3
+// input t=[u8; 4] [1,2,3,4] & FixedLength 3
 
 // Compact/general integers https://docs.substrate.io/v3/advanced/scale-codec/#compactgeneral-integers
 // input num 0|1|65535|2**32-1|2**64-1|2**128-1
