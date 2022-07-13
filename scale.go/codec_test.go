@@ -6,4 +6,5 @@ import (
 
 func TestHello(t *testing.T) {
 	test()
+	testEncode()
 }

@@ -5,7 +5,7 @@ use std::fmt::Error;
 use std::slice;
 use std::time::Duration;
 
-use libc::c_char;
+use libc::{c_char, c_int, c_uint};
 use parity_scale_codec::{Compact, Decode, Encode, OptionBool, Output, WrapperTypeEncode};
 
 #[no_mangle]
@@ -16,6 +16,21 @@ pub extern "C" fn rustdemo(name: *const libc::c_char) -> *const libc::c_char {
     let r_string: &str = " Rust say: Hello Go ";
     str_name.push_str(r_string);
     CString::new(str_name).unwrap().into_raw()
+}
+
+// compact u32 encode
+#[no_mangle]
+pub extern "C" fn compactU32encode(u32: u32) -> *const libc::c_char {
+    let compact_u32a = Compact(u32);
+    println!("Rust print {}",u32);
+    CString::new(hex::encode(compact_u32a.encode())).unwrap().into_raw()
+}
+
+
+// compact u32 decode
+#[no_mangle]
+pub extern "C" fn compactU32decode(u32_encode: *const libc::c_char) ->u32 {
+    0
 }
 
 
@@ -54,7 +69,6 @@ pub extern "C" fn rustdemo(name: *const libc::c_char) -> *const libc::c_char {
 // Original
 // Encode  input(num,bool,null,ok|err,vec,string,map) output(string)
 // Decode  input(string) output(num,bool,null,ok|err,vec,string,map)
-
 
 
 #[test]
@@ -172,10 +186,12 @@ fn codec()
     };
     assert_eq!(hexify(&ts.encode()), "14 01 00 00 00 02 00 00 00 04 00 00 00 05 00 00 00 06 00 00 00 2d c6 a3 61 1d");
 
-    let compact_u32a = Compact(0u32);
-    assert_eq!(hexify(&compact_u32a.encode()), "00");
+    let compact_u32a_raw = Compact(0u32).encode();
+    assert_eq!(hexify(&compact_u32a_raw), "00");
+    <Compact<u32>>::decode(&mut &compact_u32a_raw[..]).unwrap();
     let compact_u32b = Compact(4294967295u32);
     assert_eq!(hexify(&compact_u32b.encode()), "03 ff ff ff ff");
+    assert_eq!(hex::encode(&compact_u32b.encode()), "03ffffffff");
 
     // tuple
     let x = vec![1u8, 2, 3, 4];
@@ -185,7 +201,6 @@ fn codec()
     assert_eq!(hexify(&encoded.encode()), "34 10 01 02 03 04 80 00 00 00 00 00 00 00");
     assert_eq!((x, y), Decode::decode(&mut &encoded[..]).unwrap());
 
-
     // results ok
     let result: Result<u32, &str> = Ok(1u32);
     assert_eq!(hexify(&result.encode()), "00 01 00 00 00");
@@ -194,9 +209,9 @@ fn codec()
     assert_eq!(hexify(&result_fail.encode()), "01 44 65 6d 65 72 67 65 6e 63 79 20 66 61 69 6c 75 72 65");
 
     // fixed vector
-    let fixed_u8 = [0u8;6];
+    let fixed_u8 = [0u8; 6];
     assert_eq!(hexify(&fixed_u8.encode()), "00 00 00 00 00 00");
 
-    let fixed_u32 = [1u32;6];
+    let fixed_u32 = [1u32; 6];
     assert_eq!(hexify(&fixed_u32.encode()), "01 00 00 00 01 00 00 00 01 00 00 00 01 00 00 00 01 00 00 00 01 00 00 00");
 }
