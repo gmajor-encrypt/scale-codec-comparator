@@ -1,6 +1,10 @@
 // skip include guards
 #include <stdio.h>
 
-char* rustdemo(char *name);
+// compact<u32>
+char* compact_u32_encode(unsigned int raw);
+unsigned int compact_u32_decode(char* raw);
 
-char* compactU32encode(unsigned int raw);
+// option<bool>
+char* option_bool_encode(char* raw);
+char* option_bool_decode(char* raw);

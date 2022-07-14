@@ -5,16 +5,6 @@ use std::time::Duration;
 
 use parity_scale_codec::{Compact, Decode, Encode, OptionBool};
 
-#[no_mangle]
-pub extern "C" fn rustdemo(name: *const libc::c_char) -> *const libc::c_char {
-    let cstr_name = unsafe { CStr::from_ptr(name) };
-    let mut str_name = cstr_name.to_str().unwrap().to_string();
-    println!("Rust get Input:  \"{}\"", str_name);
-    let r_string: &str = " Rust say: Hello Go ";
-    str_name.push_str(r_string);
-    CString::new(str_name).unwrap().into_raw()
-}
-
 // compact u32 encode
 #[no_mangle]
 pub extern "C" fn compact_u32_encode(u32: u32) -> *const libc::c_char {
@@ -34,8 +24,8 @@ pub extern "C" fn compact_u32_decode(u32_encode: *const libc::c_char) -> u32 {
 
 // option<bool> encode
 #[no_mangle]
-pub extern "C" fn option_bool_encode(bool_raw: *const libc::c_char) -> *const libc::c_char {
-    let cstr_bool = unsafe { CStr::from_ptr(bool_raw) };
+pub extern "C" fn option_bool_encode(raw: *const libc::c_char) -> *const libc::c_char {
+    let cstr_bool = unsafe { CStr::from_ptr(raw) };
     let str_bool = cstr_bool.to_str().unwrap();
     let option_bool = match str_bool {
         "none" | "null" | "NULL" | "None" => OptionBool(None),
@@ -50,8 +40,8 @@ pub extern "C" fn option_bool_encode(bool_raw: *const libc::c_char) -> *const li
 // #[no_mangle]
 // it will be return "None","true","false"
 #[no_mangle]
-pub extern "C" fn option_bool_decode(bool_encode: *const libc::c_char) -> *const libc::c_char {
-    let cstr_bool = unsafe { CStr::from_ptr(bool_encode) };
+pub extern "C" fn option_bool_decode(raw: *const libc::c_char) -> *const libc::c_char {
+    let cstr_bool = unsafe { CStr::from_ptr(raw) };
     let str_bool = cstr_bool.to_str().unwrap();
     let bytes_bool = hex::decode(str_bool).unwrap();
     let option_bool = OptionBool::decode(&mut &bytes_bool[..]).unwrap().0;
@@ -134,16 +124,18 @@ pub struct CodecStruct {
 
 // CodecStruct encode
 #[no_mangle]
-pub extern "C" fn struct_encode(value: CodecStruct) -> *const libc::c_char {
+pub extern "C" fn struct_encode(ptr: *mut CodecStruct) -> *const libc::c_char {
+    assert!(!ptr.is_null());
+    let value = unsafe { &mut *ptr };
     CString::new(hex::encode(value.encode())).unwrap().into_raw()
 }
 
 // CodecStruct encode
 #[no_mangle]
-pub extern "C" fn struct_decode(raw: *const libc::c_char) -> CodecStruct {
+pub extern "C" fn struct_decode(raw: *const libc::c_char) -> *mut CodecStruct {
     let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
     let bytes_raw = hex::decode(str_raw).unwrap();
-    CodecStruct::decode(&mut &bytes_raw[..]).unwrap()
+    Box::into_raw(Box::new(CodecStruct::decode(&mut &bytes_raw[..]).unwrap()))
 }
 
 #[repr(C)]
@@ -162,8 +154,10 @@ pub struct EnumStruct {
 }
 
 #[no_mangle]
-pub extern "C" fn enum_encode(value: EnumStruct) -> *const libc::c_char {
+pub extern "C" fn enum_encode(ptr: *mut EnumStruct) -> *const libc::c_char {
     // CString::new(hex::encode(value.encode())).unwrap().into_raw()
+    assert!(!ptr.is_null());
+    let value = unsafe { &mut *ptr };
     if value.a > 0 {
         CString::new(hex::encode(EnumType::A(value.a).encode())).unwrap().into_raw()
     } else if value.b > 0 {
@@ -175,14 +169,14 @@ pub extern "C" fn enum_encode(value: EnumStruct) -> *const libc::c_char {
 
 // CodecStruct encode
 #[no_mangle]
-pub extern "C" fn enum_decode(raw: *const libc::c_char) -> EnumStruct {
+pub extern "C" fn enum_decode(raw: *const libc::c_char) -> *mut EnumStruct {
     let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
     let bytes_raw = hex::decode(str_raw).unwrap();
     let option_enum = EnumType::decode(&mut &bytes_raw[..]).unwrap();
     match option_enum {
-        EnumType::A(u32) => EnumStruct { a: u32, b: 0, c: 0 },
-        EnumType::B(u32) => EnumStruct { a: 0, b: u32, c: 0 },
-        EnumType::C(u32) => EnumStruct { a: 0, b: 0, c: u32 },
+        EnumType::A(u32) => Box::into_raw(Box::new(EnumStruct { a: u32, b: 0, c: 0 })),
+        EnumType::B(u32) => Box::into_raw(Box::new(EnumStruct { a: 0, b: u32, c: 0 })),
+        EnumType::C(u32) => Box::into_raw(Box::new(EnumStruct { a: 0, b: 0, c: u32 })),
     }
 }
 
@@ -203,27 +197,26 @@ pub extern "C" fn string_encode(raw: *const libc::c_char) -> *const libc::c_char
     CString::new(hex::encode(str_raw.encode())).unwrap().into_raw()
 }
 
-
-// fixed vector
-//     let fixed_u8 = [0u8; 6];
-//     assert_eq!(hexify(&fixed_u8.encode()), "00 00 00 00 00 00");
-//
-//     let fixed_u32 = [1u32; 6];
-//     assert_eq!(hexify(&fixed_u32.encode()), "01 00 00 00 01 00 00 00 01 00 00 00 01 00 00 00 01 00 00 00 01 00 00 00");
-
 #[no_mangle]
-pub extern "C" fn fixU16_decode(raw: *const libc::c_char) -> [u16; 6] {
+pub extern "C" fn fixU16_decode(raw: *const libc::c_char) -> *mut [u32; 6] {
     let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
     let bytes_raw = hex::decode(str_raw).unwrap();
-    let u8_fixed: [u16; 6] = Decode::decode(&mut &bytes_raw[..]).unwrap();
-    u8_fixed
+    let u8_fixed: [u32; 6] = Decode::decode(&mut &bytes_raw[..]).unwrap();
+    Box::into_raw(Box::new(u8_fixed))
     // CString::new(String::decode(&mut &bytes_bool[..]).unwrap()).unwrap().into_raw()
 }
 
 #[no_mangle]
-pub extern "C" fn fixU16_encode(raw: [u16; 6]) -> *const libc::c_char {
-    CString::new(hex::encode(raw.encode())).unwrap().into_raw()
-    // CString::new(String::decode(&mut &bytes_bool[..]).unwrap()).unwrap().into_raw()
+pub extern "C" fn fixU16_encode(ptr: *const u32, length: usize) -> *const libc::c_char {
+    assert!(!ptr.is_null());
+    let slice = unsafe {
+        std::slice::from_raw_parts(ptr, length)
+    };
+    let mut arr = [0u32; 6];
+    for (&x, p) in slice.iter().zip(arr.iter_mut()) {
+        *p = x;
+    }
+    CString::new(hex::encode(slice.encode())).unwrap().into_raw()
 }
 
 
