@@ -1,12 +1,9 @@
 extern crate parity_scale_codec;
 
 use std::ffi::{CStr, CString};
-use std::fmt::Error;
-use std::slice;
 use std::time::Duration;
 
-use libc::{c_char, c_int, c_uint};
-use parity_scale_codec::{Compact, Decode, Encode, OptionBool, Output, WrapperTypeEncode};
+use parity_scale_codec::{Compact, Decode, Encode, OptionBool};
 
 #[no_mangle]
 pub extern "C" fn rustdemo(name: *const libc::c_char) -> *const libc::c_char {
@@ -20,23 +17,255 @@ pub extern "C" fn rustdemo(name: *const libc::c_char) -> *const libc::c_char {
 
 // compact u32 encode
 #[no_mangle]
-pub extern "C" fn compactU32encode(u32: u32) -> *const libc::c_char {
+pub extern "C" fn compact_u32_encode(u32: u32) -> *const libc::c_char {
     let compact_u32a = Compact(u32);
     CString::new(hex::encode(compact_u32a.encode())).unwrap().into_raw()
 }
 
-
 // compact u32 decode
 #[no_mangle]
-pub extern "C" fn compactU32decode(u32_encode: *const libc::c_char) -> u32 {
+pub extern "C" fn compact_u32_decode(u32_encode: *const libc::c_char) -> u32 {
     let cstr_u32 = unsafe { CStr::from_ptr(u32_encode) };
-    let mut str_u32 = cstr_u32.to_str().unwrap().to_string();
+    let str_u32 = cstr_u32.to_str().unwrap().to_string();
     let bytes_u32 = hex::decode(str_u32).unwrap();
     <Compact<u32>>::decode(&mut &bytes_u32[..]).unwrap().0
 }
 
 
+// option<bool> encode
+#[no_mangle]
+pub extern "C" fn option_bool_encode(bool_raw: *const libc::c_char) -> *const libc::c_char {
+    let cstr_bool = unsafe { CStr::from_ptr(bool_raw) };
+    let str_bool = cstr_bool.to_str().unwrap();
+    let option_bool = match str_bool {
+        "none" | "null" | "NULL" | "None" => OptionBool(None),
+        "true" => OptionBool(Some(true)),
+        "false" => OptionBool(Some(false)),
+        _ => OptionBool(None)
+    };
+    CString::new(hex::encode(option_bool.encode())).unwrap().into_raw()
+}
 
+// option<bool> decode
+// #[no_mangle]
+// it will be return "None","true","false"
+#[no_mangle]
+pub extern "C" fn option_bool_decode(bool_encode: *const libc::c_char) -> *const libc::c_char {
+    let cstr_bool = unsafe { CStr::from_ptr(bool_encode) };
+    let str_bool = cstr_bool.to_str().unwrap();
+    let bytes_bool = hex::decode(str_bool).unwrap();
+    let option_bool = OptionBool::decode(&mut &bytes_bool[..]).unwrap().0;
+    let bool_string = match option_bool {
+        None => "None",
+        Some(true) => "true",
+        Some(false) => "false",
+    };
+    CString::new(bool_string).unwrap().into_raw()
+}
+
+// bool decode
+#[no_mangle]
+pub extern "C" fn bool_decode(bool_encode: *const libc::c_char) -> bool {
+    let cstr_bool = unsafe { CStr::from_ptr(bool_encode) };
+    let str_bool = cstr_bool.to_str().unwrap().to_string();
+    let bytes_bool = hex::decode(str_bool).unwrap();
+    bool::decode(&mut &bytes_bool[..]).unwrap()
+}
+
+// bool encode
+#[no_mangle]
+pub extern "C" fn bool_encode(raw: bool) -> *const libc::c_char {
+    CString::new(hex::encode(raw.encode())).unwrap().into_raw()
+}
+
+#[repr(C)]
+#[derive(Debug, PartialEq)]
+pub struct ResultsType {
+    ok: u32,
+    err: *const libc::c_char,
+}
+
+
+// results define result<u32,Err>
+// result can be Err or Ok, err_message is err message
+#[no_mangle]
+pub extern "C" fn results_encode(u32: u32, err_message: *const libc::c_char, result: *const libc::c_char) -> *const libc::c_char {
+    let cstr_result = unsafe { CStr::from_ptr(result) };
+    let str_result = cstr_result.to_str().unwrap();
+    let ok: Result<u32, &str> = Ok(u32);
+    let cstr_err = unsafe { CStr::from_ptr(err_message) };
+    let str_err = cstr_err.to_str().unwrap();
+    let err: Result<u32, &str> = Err(str_err);
+    let result_string = match str_result {
+        "Ok" => CString::new(hex::encode(ok.encode())).unwrap().into_raw(),
+        "Err" => CString::new(hex::encode(err.encode())).unwrap().into_raw(),
+        _ => CString::new(hex::encode(ok.encode())).unwrap().into_raw(),
+    };
+    result_string
+}
+
+#[repr(C)]
+#[derive(Debug, PartialEq, Encode, Decode)]
+pub enum ResultEnumType {
+    Ok(u32),
+    Err(String),
+}
+
+
+#[no_mangle]
+pub extern "C" fn results_decode(raw: *const libc::c_char) -> *mut ResultsType {
+    let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
+    let bytes_raw = hex::decode(str_raw).unwrap();
+    // Result<u32, &str>
+    let result_value = <Result<u32, String>>::decode(&mut &bytes_raw[..]).unwrap();
+    match result_value {
+        Ok(u) => Box::into_raw(Box::new(ResultsType { ok: u, err: CString::new("").unwrap().into_raw() })),
+        Err(e) => Box::into_raw(Box::new(ResultsType { ok: 0, err: CString::new(e).unwrap().into_raw() })),
+    }
+}
+
+
+#[repr(C)]
+#[derive(Debug, PartialEq, Encode, Decode)]
+pub struct CodecStruct {
+    data: u32,
+    other: u8,
+}
+
+// CodecStruct encode
+#[no_mangle]
+pub extern "C" fn struct_encode(value: CodecStruct) -> *const libc::c_char {
+    CString::new(hex::encode(value.encode())).unwrap().into_raw()
+}
+
+// CodecStruct encode
+#[no_mangle]
+pub extern "C" fn struct_decode(raw: *const libc::c_char) -> CodecStruct {
+    let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
+    let bytes_raw = hex::decode(str_raw).unwrap();
+    CodecStruct::decode(&mut &bytes_raw[..]).unwrap()
+}
+
+#[repr(C)]
+#[derive(Debug, PartialEq, Encode, Decode)]
+pub enum EnumType {
+    A(u32),
+    B(u32),
+    C(u32),
+}
+
+#[repr(C)]
+pub struct EnumStruct {
+    a: u32,
+    b: u32,
+    c: u32,
+}
+
+#[no_mangle]
+pub extern "C" fn enum_encode(value: EnumStruct) -> *const libc::c_char {
+    // CString::new(hex::encode(value.encode())).unwrap().into_raw()
+    if value.a > 0 {
+        CString::new(hex::encode(EnumType::A(value.a).encode())).unwrap().into_raw()
+    } else if value.b > 0 {
+        CString::new(hex::encode(EnumType::B(value.b).encode())).unwrap().into_raw()
+    } else {
+        CString::new(hex::encode(EnumType::C(value.c).encode())).unwrap().into_raw()
+    }
+}
+
+// CodecStruct encode
+#[no_mangle]
+pub extern "C" fn enum_decode(raw: *const libc::c_char) -> EnumStruct {
+    let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
+    let bytes_raw = hex::decode(str_raw).unwrap();
+    let option_enum = EnumType::decode(&mut &bytes_raw[..]).unwrap();
+    match option_enum {
+        EnumType::A(u32) => EnumStruct { a: u32, b: 0, c: 0 },
+        EnumType::B(u32) => EnumStruct { a: 0, b: u32, c: 0 },
+        EnumType::C(u32) => EnumStruct { a: 0, b: 0, c: u32 },
+    }
+}
+
+
+// String encode
+// bool decode
+#[no_mangle]
+pub extern "C" fn string_decode(raw: *const libc::c_char) -> *const libc::c_char {
+    let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
+    let bytes_raw = hex::decode(str_raw).unwrap();
+    CString::new(String::decode(&mut &bytes_raw[..]).unwrap()).unwrap().into_raw()
+}
+
+// string encode
+#[no_mangle]
+pub extern "C" fn string_encode(raw: *const libc::c_char) -> *const libc::c_char {
+    let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
+    CString::new(hex::encode(str_raw.encode())).unwrap().into_raw()
+}
+
+
+// fixed vector
+//     let fixed_u8 = [0u8; 6];
+//     assert_eq!(hexify(&fixed_u8.encode()), "00 00 00 00 00 00");
+//
+//     let fixed_u32 = [1u32; 6];
+//     assert_eq!(hexify(&fixed_u32.encode()), "01 00 00 00 01 00 00 00 01 00 00 00 01 00 00 00 01 00 00 00 01 00 00 00");
+
+#[no_mangle]
+pub extern "C" fn fixU16_decode(raw: *const libc::c_char) -> [u16; 6] {
+    let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
+    let bytes_raw = hex::decode(str_raw).unwrap();
+    let u8_fixed: [u16; 6] = Decode::decode(&mut &bytes_raw[..]).unwrap();
+    u8_fixed
+    // CString::new(String::decode(&mut &bytes_bool[..]).unwrap()).unwrap().into_raw()
+}
+
+#[no_mangle]
+pub extern "C" fn fixU16_encode(raw: [u16; 6]) -> *const libc::c_char {
+    CString::new(hex::encode(raw.encode())).unwrap().into_raw()
+    // CString::new(String::decode(&mut &bytes_bool[..]).unwrap()).unwrap().into_raw()
+}
+
+
+#[no_mangle]
+pub extern "C" fn array_u32_encode(ptr: *const u32, length: usize) -> *const libc::c_char {
+    assert!(!ptr.is_null());
+    let slice = unsafe {
+        std::slice::from_raw_parts(ptr, length)
+    };
+    CString::new(hex::encode(slice.encode())).unwrap().into_raw()
+}
+
+#[no_mangle]
+pub extern "C" fn array_u32_decode(raw: *const libc::c_char) -> *mut Vec<u32> {
+    let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
+    let bytes_raw = hex::decode(str_raw).unwrap();
+    Box::into_raw(Box::new(<Vec<u32>>::decode(&mut &bytes_raw[..]).unwrap()))
+}
+
+
+// tuple
+#[repr(C)]
+#[derive(Debug, PartialEq, Encode, Decode)]
+pub struct TupleType {
+    a: u32,
+    b: u32,
+}
+
+
+#[no_mangle]
+pub extern "C" fn tuple_u32u32_encode(ptr: *mut TupleType) -> *const libc::c_char {
+    assert!(!ptr.is_null());
+    let t = unsafe { &mut *ptr };
+    CString::new(hex::encode(t.encode())).unwrap().into_raw()
+}
+
+#[no_mangle]
+pub extern "C" fn tuple_u32u32_decode(raw: *const libc::c_char) -> *mut TupleType {
+    let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
+    let bytes_raw = hex::decode(str_raw).unwrap();
+    Box::into_raw(Box::new(TupleType::decode(&mut &bytes_raw[..]).unwrap()))
+}
 
 
 // https://github.com/paritytech/parity-scale-codec
