@@ -6,7 +6,9 @@ package scale_go
 #include "../src/scale_ffi.h"
 */
 import "C"
-import "fmt"
+import (
+	"fmt"
+)
 
 func test() {
 	s := "Go say: Hello Rust"
@@ -16,10 +18,14 @@ func test() {
 	fmt.Println("xxc", output)
 }
 
-func testEncode() {
-	// s := "Go say: Hello Rust"
-	input := C.uint(1)
-	o := C.compactU32encode(input)
+func testCompactEncode() {
+	o := C.compactU32encode(C.uint(2))
 	output := C.GoString(o)
 	fmt.Println("xxc", output)
+}
+
+func testCompactDecode() {
+	o := C.compactU32decode(C.CString("08"))
+	output := (C.uint)(o)
+	fmt.Println("xxc", int(output))
 }

@@ -22,16 +22,21 @@ pub extern "C" fn rustdemo(name: *const libc::c_char) -> *const libc::c_char {
 #[no_mangle]
 pub extern "C" fn compactU32encode(u32: u32) -> *const libc::c_char {
     let compact_u32a = Compact(u32);
-    println!("Rust print {}",u32);
     CString::new(hex::encode(compact_u32a.encode())).unwrap().into_raw()
 }
 
 
 // compact u32 decode
 #[no_mangle]
-pub extern "C" fn compactU32decode(u32_encode: *const libc::c_char) ->u32 {
-    0
+pub extern "C" fn compactU32decode(u32_encode: *const libc::c_char) -> u32 {
+    let cstr_u32 = unsafe { CStr::from_ptr(u32_encode) };
+    let mut str_u32 = cstr_u32.to_str().unwrap().to_string();
+    let bytes_u32 = hex::decode(str_u32).unwrap();
+    <Compact<u32>>::decode(&mut &bytes_u32[..]).unwrap().0
 }
+
+
+
 
 
 // https://github.com/paritytech/parity-scale-codec
