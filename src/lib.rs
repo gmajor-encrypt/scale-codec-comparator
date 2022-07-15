@@ -101,7 +101,6 @@ pub enum ResultEnumType {
     Err(String),
 }
 
-
 #[no_mangle]
 pub extern "C" fn results_decode(raw: *const libc::c_char) -> *mut ResultsType {
     let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
@@ -124,7 +123,7 @@ pub struct CodecStruct {
 
 // CodecStruct encode
 #[no_mangle]
-pub extern "C" fn struct_encode(ptr: *mut CodecStruct) -> *const libc::c_char {
+pub extern "C" fn data_struct_encode(ptr: *mut CodecStruct) -> *const libc::c_char {
     assert!(!ptr.is_null());
     let value = unsafe { &mut *ptr };
     CString::new(hex::encode(value.encode())).unwrap().into_raw()
@@ -132,7 +131,7 @@ pub extern "C" fn struct_encode(ptr: *mut CodecStruct) -> *const libc::c_char {
 
 // CodecStruct encode
 #[no_mangle]
-pub extern "C" fn struct_decode(raw: *const libc::c_char) -> *mut CodecStruct {
+pub extern "C" fn data_struct_decode(raw: *const libc::c_char) -> *mut CodecStruct {
     let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
     let bytes_raw = hex::decode(str_raw).unwrap();
     Box::into_raw(Box::new(CodecStruct::decode(&mut &bytes_raw[..]).unwrap()))
@@ -154,7 +153,7 @@ pub struct EnumStruct {
 }
 
 #[no_mangle]
-pub extern "C" fn enum_encode(ptr: *mut EnumStruct) -> *const libc::c_char {
+pub extern "C" fn data_enum_encode(ptr: *mut EnumStruct) -> *const libc::c_char {
     // CString::new(hex::encode(value.encode())).unwrap().into_raw()
     assert!(!ptr.is_null());
     let value = unsafe { &mut *ptr };
@@ -169,7 +168,7 @@ pub extern "C" fn enum_encode(ptr: *mut EnumStruct) -> *const libc::c_char {
 
 // CodecStruct encode
 #[no_mangle]
-pub extern "C" fn enum_decode(raw: *const libc::c_char) -> *mut EnumStruct {
+pub extern "C" fn data_enum_decode(raw: *const libc::c_char) -> *mut EnumStruct {
     let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
     let bytes_raw = hex::decode(str_raw).unwrap();
     let option_enum = EnumType::decode(&mut &bytes_raw[..]).unwrap();
