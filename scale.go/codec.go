@@ -110,8 +110,7 @@ func StringDecode(raw string) string {
 	return C.GoString(o)
 }
 
-// FixU32Encode TODO this array has some issue
-func FixU32Encode(input [6]uint) string {
+func FixU32Encode(input [6]uint32) string {
 	o := C.fixU32_encode((*C.uint)(unsafe.Pointer(&input[0])), C.size_t(len(input)))
 	return C.GoString(o)
 }
@@ -126,8 +125,7 @@ func FixU32Decode(raw string) []uint {
 	return arr
 }
 
-// VecU32Encode TODO this array has some issue
-func VecU32Encode(input []uint) string {
+func VecU32Encode(input []uint32) string {
 	o := C.vec_u32_encode((*C.uint)(unsafe.Pointer(&input[0])), C.uint(len(input)))
 	return C.GoString(o)
 }

@@ -212,8 +212,6 @@ pub extern "C" fn fixU32_encode(ptr: *const u32, length: libc::size_t) -> *const
     let slice = unsafe {
         std::slice::from_raw_parts(ptr, length as usize)
     };
-    println!("{:?}", slice);
-    println!("{:?}", length);
     let mut arr = [0u32; 6];
     for (&x, p) in slice.iter().zip(arr.iter_mut()) {
         *p = x;
