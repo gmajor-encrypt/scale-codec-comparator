@@ -197,30 +197,33 @@ pub extern "C" fn string_encode(raw: *const libc::c_char) -> *const libc::c_char
 }
 
 #[no_mangle]
-pub extern "C" fn fixU16_decode(raw: *const libc::c_char) -> *mut [u32; 6] {
+pub extern "C" fn fixU32_decode(raw: *const libc::c_char) -> *mut u32 {
     let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
     let bytes_raw = hex::decode(str_raw).unwrap();
-    let u8_fixed: [u32; 6] = Decode::decode(&mut &bytes_raw[..]).unwrap();
-    Box::into_raw(Box::new(u8_fixed))
-    // CString::new(String::decode(&mut &bytes_bool[..]).unwrap()).unwrap().into_raw()
+    let mut u8_fixed: [u32; 6] = Decode::decode(&mut &bytes_raw[..]).unwrap();
+    let ptr = u8_fixed.as_mut_ptr();
+    std::mem::forget(u8_fixed);
+    ptr
 }
 
 #[no_mangle]
-pub extern "C" fn fixU16_encode(ptr: *const u32, length: usize) -> *const libc::c_char {
+pub extern "C" fn fixU32_encode(ptr: *const u32, length: libc::size_t) -> *const libc::c_char {
     assert!(!ptr.is_null());
     let slice = unsafe {
-        std::slice::from_raw_parts(ptr, length)
+        std::slice::from_raw_parts(ptr, length as usize)
     };
+    println!("{:?}", slice);
+    println!("{:?}", length);
     let mut arr = [0u32; 6];
     for (&x, p) in slice.iter().zip(arr.iter_mut()) {
         *p = x;
     }
-    CString::new(hex::encode(slice.encode())).unwrap().into_raw()
+    CString::new(hex::encode(arr.encode())).unwrap().into_raw()
 }
 
 
 #[no_mangle]
-pub extern "C" fn array_u32_encode(ptr: *const u32, length: usize) -> *const libc::c_char {
+pub extern "C" fn vec_u32_encode(ptr: *const u32, length: usize) -> *const libc::c_char {
     assert!(!ptr.is_null());
     let slice = unsafe {
         std::slice::from_raw_parts(ptr, length)
@@ -229,10 +232,13 @@ pub extern "C" fn array_u32_encode(ptr: *const u32, length: usize) -> *const lib
 }
 
 #[no_mangle]
-pub extern "C" fn array_u32_decode(raw: *const libc::c_char) -> *mut Vec<u32> {
+pub extern "C" fn vec_u32_decode(raw: *const libc::c_char) -> *mut u32 {
     let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
     let bytes_raw = hex::decode(str_raw).unwrap();
-    Box::into_raw(Box::new(<Vec<u32>>::decode(&mut &bytes_raw[..]).unwrap()))
+    let mut vec32 = <Vec<u32>>::decode(&mut &bytes_raw[..]).unwrap();
+    let ptr = vec32.as_mut_ptr();
+    std::mem::forget(vec32);
+    ptr
 }
 
 

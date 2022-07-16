@@ -8,6 +8,10 @@ package scale_go
 import (
 	"C"
 )
+import (
+	"reflect"
+	"unsafe"
+)
 
 func CompactU32Encode() string {
 	o := C.compact_u32_encode(C.uint(2))
@@ -104,4 +108,45 @@ func StringEncode(s string) string {
 func StringDecode(raw string) string {
 	o := C.string_decode(C.CString(raw))
 	return C.GoString(o)
+}
+
+// FixU32Encode TODO this array has some issue
+func FixU32Encode(input [6]uint) string {
+	o := C.fixU32_encode((*C.uint)(unsafe.Pointer(&input[0])), C.size_t(len(input)))
+	return C.GoString(o)
+}
+
+func FixU32Decode(raw string) []uint {
+	o := C.fixU32_decode(C.CString(raw))
+	first := (*C.uint)(o)
+	var arr []uint
+	for _, v := range carray2slice(first, 6) {
+		arr = append(arr, uint(v))
+	}
+	return arr
+}
+
+// VecU32Encode TODO this array has some issue
+func VecU32Encode(input []uint) string {
+	o := C.vec_u32_encode((*C.uint)(unsafe.Pointer(&input[0])), C.uint(len(input)))
+	return C.GoString(o)
+}
+
+func VecU32Decode(raw string) []uint {
+	o := C.vec_u32_decode(C.CString(raw))
+	first := (*C.uint)(o)
+	var arr []uint
+	for _, v := range carray2slice(first, 6) {
+		arr = append(arr, uint(v))
+	}
+	return arr
+}
+
+func carray2slice(array *C.uint, len int) []C.uint {
+	var list []C.uint
+	sliceHeader := (*reflect.SliceHeader)(unsafe.Pointer(&list))
+	sliceHeader.Cap = len
+	sliceHeader.Len = len
+	sliceHeader.Data = uintptr(unsafe.Pointer(array))
+	return list
 }

@@ -45,12 +45,12 @@ char* string_encode(char* raw);
 char* string_decode(char* raw);
 
 // fixed
-char* fixU16_encode(char* ptr,int length);
-char* fixU16_decode(char* raw);
+char* fixU32_encode(unsigned int* ptr,size_t length);
+unsigned int* fixU32_decode(char* raw);
 
 // vendor
-char* array_u32_encode(char* ptr,int length);
-char* array_u32_decode(char* raw);
+char* vec_u32_encode(unsigned int* ptr,unsigned int length);
+unsigned int* vec_u32_decode(char* raw);
 
 // tuple
 struct TupleType {
