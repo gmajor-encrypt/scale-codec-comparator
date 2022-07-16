@@ -150,3 +150,22 @@ func carray2slice(array *C.uint, len int) []C.uint {
 	sliceHeader.Data = uintptr(unsafe.Pointer(array))
 	return list
 }
+
+type TupleType struct {
+	A uint
+	B uint
+}
+
+func TupleDecode() *TupleType {
+	o := C.tuple_u32u32_decode(C.CString("0a00000001000000"))
+	result := (*C.struct_TupleType)(o)
+	return &TupleType{A: uint(result.a), B: uint(result.b)}
+}
+
+func TupleEncode() string {
+	var s C.struct_TupleType
+	s.a = 10
+	s.b = 1
+	o := C.tuple_u32u32_encode(&s)
+	return C.GoString(o)
+}

@@ -33,4 +33,7 @@ func TestCodec(t *testing.T) {
 
 	assert.Equal(t, "18010000000000000002000000000000000300000000000000", VecU32Encode([]uint{1, 2, 3, 4, 5, 6}))
 	assert.Equal(t, []uint{1, 0, 2, 0, 3, 0}, VecU32Decode("18010000000000000002000000000000000300000000000000"))
+
+	assert.Equal(t, &TupleType{A: 10, B: 1}, TupleDecode())
+	assert.Equal(t, "0a00000001000000", TupleEncode())
 }
