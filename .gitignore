@@ -3,3 +3,4 @@ target
 .idea
 php-scale-codec/.phpunit.result.cache
 php-scale-codec/vendor
+py-scale-codec/env
