@@ -1,0 +1,23 @@
+{
+  "name": "scale-codec-comparator",
+  "version": "1.0.0",
+  "description": "scale codec comparator",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "gmajor",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.18.9",
+    "@babel/preset-env": "^7.18.9",
+    "@babel/preset-typescript": "^7.18.6",
+    "@babel/register": "^7.18.9",
+    "@babel/runtime": "^7.18.9",
+    "@types/jest": "^28.1.6",
+    "babel-jest": "^28.1.3"
+  },
+  "dependencies": {
+    "ffi-napi": "^4.0.3"
+  }
+}

@@ -4,3 +4,4 @@ target
 php-scale-codec/.phpunit.result.cache
 php-scale-codec/vendor
 py-scale-codec/env
+polkadot-js/node_modules
