@@ -101,5 +101,80 @@ class CodecFFI
         $o = $this->FFIInstant->data_enum_decode("0001000000");
         return ["a" => $o->a, "b" => $o->b, "c" => $o->c];
     }
+
+    public function StringDecode (string $s): string
+    {
+        return FFI::string($this->FFIInstant->string_decode($s));
+    }
+
+    public function StringEncode (string $s): string
+    {
+        $o = $this->FFIInstant->string_encode($s);
+        return FFI::string($o);
+    }
+
+
+    public function FixU32Encode (array $s): string
+    {
+        $fixedUInt = FFI::new("unsigned int[6]");
+        for ($i = 0; $i < count($s); $i++) {
+            $fixedUInt[$i] = $s[$i];
+        }
+        return FFI::string($this->FFIInstant->fixU32_encode(FFI::addr($fixedUInt[0]), count($s)));
+    }
+
+    public function FixU32Decode (string $s): array
+    {
+        $fixedUInt = FFI::new("unsigned int[6]");
+        $o = $this->FFIInstant->fixU32_decode($s);;
+        FFI::memcpy($fixedUInt, $o, 6 * 4);
+        $r = array();
+        foreach ($fixedUInt as $value) {
+            $r[] = $value;
+        }
+        return $r;
+    }
+
+    public function VecU32Encode(array $input):string
+    {
+        $size = count($input);
+        $arrayUInt = FFI::new("unsigned int[$size]");
+        for ($i = 0; $i < $size; $i++) {
+            $arrayUInt[$i] = $input[$i];
+        }
+        return FFI::string($this->FFIInstant->vec_u32_encode(FFI::addr($arrayUInt[0]), count($input)));
+    }
+
+    public function VecU32Decode(string $input):array
+    {
+        $fixedUInt = FFI::new("unsigned int[6]");
+        $o = $this->FFIInstant->vec_u32_decode($input);;
+        FFI::memcpy($fixedUInt, $o, 6 * 4);
+        $r = array();
+        foreach ($fixedUInt as $value) {
+            $r[] = $value;
+        }
+        return $r;
+    }
+
+
+    public function TupleEncode(){
+        $tv = $this->FFIInstant->new("struct TupleType");
+        $tv->a = 10;
+        $tv->b = 1;
+        $o = $this->FFIInstant->tuple_u32u32_encode(FFI::addr($tv));
+        return FFI::string($o);
+    }
+
+    public function TupleDecode(){
+        $o = $this->FFIInstant->tuple_u32u32_decode("0a00000001000000");
+        $A = $o->a;
+        $B = $o->b;
+        return ["A" => $A, "B" => $B];
+    }
+
+
+
+
 }
 

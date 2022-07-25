@@ -37,10 +37,22 @@ final class BaseTest extends TestCase
         $this->assertEquals("0a00000001", $this->FFICodec->StructEncode());
 
 
-        $this->assertEquals(["a" => 1, "b" => 0,"c"=>0], $this->FFICodec->EnumDecode());
+        $this->assertEquals(["a" => 1, "b" => 0, "c" => 0], $this->FFICodec->EnumDecode());
         $this->assertEquals("0001000000", $this->FFICodec->EnumEncode());
 
 
+        $this->assertEquals("1848616d6c6574", $this->FFICodec->StringEncode("Hamlet"));
+        $this->assertEquals("Hamlet", $this->FFICodec->StringDecode("1848616d6c6574"));
+
+        $this->assertEquals("010000000200000003000000040000000500000006000000", $this->FFICodec->FixU32Encode([1, 2, 3, 4, 5, 6]));
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $this->FFICodec->FixU32Decode("010000000200000003000000040000000500000006000000"));
+
+        $this->assertEquals("18010000000200000003000000040000000500000006000000", $this->FFICodec->VecU32Encode([1, 2, 3, 4, 5, 6]));
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $this->FFICodec->VecU32Decode("18010000000200000003000000040000000500000006000000"));
+
+
+        $this->assertEquals("0a00000001000000", $this->FFICodec->TupleEncode());
+        $this->assertEquals(["A" => 10, "B" => 1], $this->FFICodec->TupleDecode());
     }
 
 
