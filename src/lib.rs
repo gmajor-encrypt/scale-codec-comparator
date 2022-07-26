@@ -201,6 +201,7 @@ pub extern "C" fn fixU32_decode(raw: *const libc::c_char) -> *mut u32 {
     let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
     let bytes_raw = hex::decode(str_raw).unwrap();
     let mut u8_fixed: [u32; 6] = Decode::decode(&mut &bytes_raw[..]).unwrap();
+    println!("fixU32_decode input {:?}",u8_fixed);
     let ptr = u8_fixed.as_mut_ptr();
     std::mem::forget(u8_fixed);
     ptr
