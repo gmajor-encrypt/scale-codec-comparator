@@ -5,8 +5,8 @@ import os
 
 class Codec:
     binPath = Path(os.path.dirname(os.path.abspath(__file__))).parent.parent.absolute()
-    ffibuilder = FFI()
-    ffibuilder.cdef("""
+    ffi = FFI()
+    ffi.cdef("""
             // compact<u32>
 char* compact_u32_encode(unsigned int raw);
 unsigned int compact_u32_decode(char* raw);
@@ -65,12 +65,39 @@ struct TupleType {
 char* tuple_u32u32_encode(struct TupleType* raw);
 struct TupleType*  tuple_u32u32_decode(char* raw);
         """)
-    # ffibuilder.set_source()
-    lib = ffibuilder.dlopen(str(binPath) + '/lib/libscale_ffi.dylib')
+    lib = ffi.dlopen(str(binPath) + '/lib/libscale_ffi.dylib')
 
-    def run(self):
-        print(self.lib.compact_u32_encode(1))
+    def compact_u32_encode(self, uint32):
+        return self.to_utf8(self.lib.compact_u32_encode(uint32))
+
+    def compact_u32_decode(self, raw):
+        raw = self.str_to_ffi_string(raw)
+        return self.lib.compact_u32_decode(raw)
+
+    # boolValue will be None, True, False
+    def option_bool_encode(self, boolOption):
+        return self.to_utf8(self.lib.option_bool_encode(boolOption))
+
+    def option_bool_decode(self, raw):
+        raw = self.str_to_ffi_string(raw)
+        return self.to_utf8(self.lib.option_bool_decode(raw))
+
+    def bool_decode(self, raw):
+        raw = self.str_to_ffi_string(raw)
+        return self.lib.bool_decode(raw)
+
+    def bool_encode(self, boolValue):
+        return self.to_utf8(self.lib.bool_encode(boolValue))
+
+
+
+
+    def to_utf8(self, raw):
+        return str(self.ffi.string(raw), 'utf-8')
+
+    def str_to_ffi_string(self, raw):
+        return self.ffi.new("char []", raw.encode())
 
 
 if __name__ == '__main__':
-    Codec().run()
+    c = Codec()
