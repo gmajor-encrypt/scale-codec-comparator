@@ -2,13 +2,9 @@ let ffi = require('ffi-napi');
 let path = require('path');
 const ref = require('ref-napi')
 const Struct = require('ref-struct-di')(ref);
+const ArrayType = require('ref-array-di')(ref);
 
 let rootPath = path.resolve(path.dirname(path.dirname(__dirname)))
-
-// const box = Struct({
-//     width: ref.types.int,
-//     height: ref.types.int
-// });
 
 const resultsType = Struct({
     ok: ref.types.uint,
@@ -20,6 +16,16 @@ const CodecStruct = Struct({
     other: 'uint8'
 });
 
+const EnumStruct = Struct({
+    a: "uint",
+    b: 'uint',
+    c: 'uint'
+});
+
+const TupleType = Struct({
+    a: "uint",
+    b: 'uint'
+});
 
 let libm = ffi.Library(rootPath + "/lib/libscale_ffi.dylib", {
     'compact_u32_encode': ['string', ['uint']],
@@ -32,10 +38,20 @@ let libm = ffi.Library(rootPath + "/lib/libscale_ffi.dylib", {
     'results_decode': [ref.refType(resultsType), ['string']],
     'data_struct_encode': ['string', [ref.refType(CodecStruct)]],
     'data_struct_decode': [ref.refType(CodecStruct), ['string']],
-
+    'data_enum_encode': ['string', [ref.refType(EnumStruct)]],
+    'data_enum_decode': [ref.refType(EnumStruct), ['string']],
+    'tuple_u32u32_encode': ['string', [ref.refType(TupleType)]],
+    'tuple_u32u32_decode': [ref.refType(TupleType), ['string']],
+    'string_encode': ['string', ['string']],
+    'string_decode': ['string', ['string']],
+    'fixU32_encode': ['string', [ref.refType("uint"), "uint"]],
+    'fixU32_decode': [ref.refType("uint"), ['string']],
+    'vec_u32_encode': ['string', [ref.refType("uint"), "uint"]],
+    'vec_u32_decode': [ref.refType("uint"), ['string']],
 });
 
-describe('Data', (): void => {
+describe('base ffi codec', (): void => {
+
     it('encodes u32', (): void => {
         expect(
             "08"
@@ -66,6 +82,7 @@ describe('Data', (): void => {
             true
         ).toEqual(libm.bool_decode("01"));
     });
+
     it('encode result<u32,string>', (): void => {
         expect(
             "0002000000"
@@ -78,18 +95,112 @@ describe('Data', (): void => {
             {"err": "", "ok": 2}
         ).toEqual(result.deref().toJSON());
     });
+
     it('encode struct', (): void => {
         const st = new CodecStruct;
         st.data = 10;
         st.other = 1;
         expect(
             "0a00000001"
-        ).toEqual( libm.data_struct_encode(st.ref()));
+        ).toEqual(libm.data_struct_encode(st.ref()));
     });
     it('decode struct', (): void => {
-        let value =  libm.data_struct_decode("0a00000001")
+        let value = libm.data_struct_decode("0a00000001")
         expect(
             {"data": 10, "other": 1}
-        ).toEqual( value.deref().toJSON());
+        ).toEqual(value.deref().toJSON());
     });
+
+    it('encode enum', (): void => {
+        const st = new EnumStruct;
+        st.a = 1;
+        expect(
+            "0001000000"
+        ).toEqual(libm.data_enum_encode(st.ref()));
+    });
+    it('decode enum', (): void => {
+        let value = libm.data_enum_decode("0001000000")
+        expect(
+            {"a": 1, "b": 0, "c": 0}
+        ).toEqual(value.deref().toJSON());
+    });
+
+
+    it('encode (u32,u32)', (): void => {
+        const st = new TupleType;
+        st.a = 10;
+        st.b = 1;
+        expect(
+            "0a00000001000000"
+        ).toEqual(libm.tuple_u32u32_encode(st.ref()));
+    });
+    it('decode (u32,u32)', (): void => {
+        let value = libm.tuple_u32u32_decode("0a00000001000000")
+        expect(
+            {"a": 10, "b": 1}
+        ).toEqual(value.deref().toJSON());
+    });
+
+    it('encodes string', (): void => {
+        expect(
+            "1848616d6c6574"
+        ).toEqual(libm.string_encode("Hamlet"));
+    });
+    it('decode string', (): void => {
+        expect(
+            "Hamlet"
+        ).toEqual(libm.string_decode("1848616d6c6574"));
+    });
+
+    it('encode [u32;6]', (): void => {
+        const IntArray = ArrayType('uint32');
+        // @ts-ignore
+        const array = new IntArray([1, 2, 3, 4, 5, 6]);
+        expect(
+            "010000000200000003000000040000000500000006000000"
+        ).toEqual(libm.fixU32_encode(array.buffer, 6));
+    });
+
+    it('decode [u32;6]', (): void => {
+        // const buf = Buffer.alloc(ref.sizeof.pointer);
+        const uIntArray = ArrayType('uint32');
+        let value = libm.fixU32_decode("010000000200000003000000040000000500000006000000")
+
+        let buf = Buffer.alloc(ref.sizeof.pointer);
+        buf.writePointer(value);
+        let uint32Size = ref.sizeof.uint
+        buf = buf.readPointer(0, uint32Size * 6);
+
+        const values = [];
+        for (let i = 0; i < 6; i++) {
+            const ptr = ref.get(buf, i * uint32Size, ref.types.uint);
+            values.push(ptr);
+        }
+        console.log(values)
+        // ref.writePointer(buf, 0, value)
+        // const out = ref.readPointer(buf, 0, 24);
+
+        expect(
+            JSON.stringify([1, 2, 3, 4, 5, 6])
+        ).toEqual(values);
+    });
+
+
+    it('encode vec<u32>', (): void => {
+        const IntArray = ArrayType('uint32');
+        const array = new IntArray([1, 2, 3, 4, 5, 6]);
+        expect(
+            "18010000000200000003000000040000000500000006000000"
+        ).toEqual(libm.vec_u32_encode(array.buffer, 6));
+    });
+
+    it('decode <u32>', (): void => {
+        const uIntArray = ArrayType('uint32');
+        let value = libm.vec_u32_decode("18010000000200000003000000040000000500000006000000")
+        let a = new uIntArray(value)
+        expect(
+            JSON.stringify([1, 2, 3, 4, 5, 6])
+        ).toEqual(a.ref().deref().toJSON());
+    });
+
 })
