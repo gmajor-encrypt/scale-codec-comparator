@@ -1,5 +1,6 @@
 // skip include guards
 #include <stdio.h>
+#include <stdint.h>
 #include <stdbool.h>
 
 // compact<u32>
