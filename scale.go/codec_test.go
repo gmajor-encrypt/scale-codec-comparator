@@ -93,3 +93,42 @@ func TestEnum(t *testing.T) {
 	assert.EqualValues(t, ffiValue.A, goStructValue["A"].(uint32))
 	assert.Equal(t, EnumEncode(&EnumStruct{A: 1}), types.Encode("te", map[string]interface{}{"A": 1}))
 }
+
+func TestString(t *testing.T) {
+	m := types.ScaleDecoder{}
+	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("1848616d6c6574")}, nil)
+	assert.Equal(t, StringDecode("1848616d6c6574"), m.ProcessAndUpdateData("String").(string))
+	assert.Equal(t, StringEncode("Hamlet"), types.Encode("String", "Hamlet"))
+}
+
+func TestFixedU32(t *testing.T) {
+	m := types.ScaleDecoder{}
+	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("010000000200000003000000040000000500000006000000")}, nil)
+	var uintArr []uint
+	for _, v := range m.ProcessAndUpdateData("[u32; 6]").([]interface{}) {
+		uintArr = append(uintArr, uint(v.(uint32)))
+	}
+	assert.EqualValues(t, FixU32Decode("010000000200000003000000040000000500000006000000"), uintArr)
+	assert.Equal(t, FixU32Encode([6]uint32{1, 2, 3, 4, 5, 6}), types.Encode("[u32; 6]", []uint{1, 2, 3, 4, 5, 6}))
+}
+
+func TestVecU32(t *testing.T) {
+	m := types.ScaleDecoder{}
+	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("18010000000200000003000000040000000500000006000000")}, nil)
+	var uintArr []uint
+	for _, v := range m.ProcessAndUpdateData("Vec<u32>").([]interface{}) {
+		uintArr = append(uintArr, uint(v.(uint32)))
+	}
+	assert.EqualValues(t, VecU32Decode("18010000000200000003000000040000000500000006000000"), uintArr)
+	assert.Equal(t, VecU32Encode([]uint32{1, 2, 3, 4, 5, 6}), types.Encode("Vec<u32>", []uint{1, 2, 3, 4, 5, 6}))
+}
+
+func TestTupleU32U32(t *testing.T) {
+	m := types.ScaleDecoder{}
+	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("0a00000001000000")}, nil)
+	tupleValue := TupleDecode("0a00000001000000")
+	goTupleDecodeValue := m.ProcessAndUpdateData("(u32,u32)")
+	assert.EqualValues(t, tupleValue.A, goTupleDecodeValue.(map[string]interface{})["col1"])
+	assert.EqualValues(t, tupleValue.B, goTupleDecodeValue.(map[string]interface{})["col2"])
+	assert.Equal(t, TupleEncode(&TupleType{A: 10, B: 1}), types.Encode("(u32,u32)", map[string]interface{}{"col1": 10, "col2": 1}))
+}

@@ -1,0 +1,26 @@
+name: scale-go-test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Build and TEST
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v1
+        with:
+          go-version: 1.17.10
+
+      - run: go mod download
+
+      - name: Test
+        run: |
+          go test -v ./...
