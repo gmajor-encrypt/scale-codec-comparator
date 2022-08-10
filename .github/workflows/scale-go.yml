@@ -18,7 +18,9 @@ jobs:
       - uses: actions-rs/toolchain@v1
           with:
             toolchain: stable
-      - run: make
+
+      - name: build-ffi
+        run: make
 
       - uses: actions/setup-go@v1
         with:
