@@ -3,8 +3,6 @@ name: scale-go-test
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 jobs:
   test:
