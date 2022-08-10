@@ -11,3 +11,7 @@ target/debug/libscale_ffi.$(EXT): src/lib.rs Cargo.toml
 
 clean:
 	rm -rf target
+
+
+testScaleGo:
+	cd scale.go && go test -v ./...
