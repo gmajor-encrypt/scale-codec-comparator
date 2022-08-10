@@ -17,15 +17,19 @@ jobs:
         with:
           toolchain: nightly
           default: true
-
+      
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+      
       - name: build-ffi
-        run: make
-
+        run: |
+           mv target/debug/libscale_ffi.so lib/libscale_ffi.so
+           
       - uses: actions/setup-go@v1
         with:
           go-version: 1.17.10
 
       - name: Test
         run: |
-          ls -l lib
           make testScaleGo
