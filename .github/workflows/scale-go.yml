@@ -25,6 +25,5 @@ jobs:
           go-version: 1.17.10
 
       - name: Test
-        working-directory: scale.go
         run: |
-          go test -v ./...
+          make testScaleGo
