@@ -1,7 +1,7 @@
 package scale_go
 
 /*
-#cgo LDFLAGS: -L${SRCDIR} -lscale_ffi
+#cgo LDFLAGS: -L./xx -lscale_ffi
 #include <stdlib.h>
 #include "../src/scale_ffi.h"
 */
