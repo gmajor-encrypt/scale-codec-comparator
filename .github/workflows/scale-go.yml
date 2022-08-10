@@ -27,5 +27,4 @@ jobs:
       - name: Test
         run: |
           ls -l lib
-          echo $LD_LIBRARY_PATH
           make testScaleGo
