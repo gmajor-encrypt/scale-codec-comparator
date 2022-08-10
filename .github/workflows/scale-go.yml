@@ -16,8 +16,8 @@ jobs:
           fetch-depth: 0
 
       - uses: actions-rs/toolchain@v1
-          with:
-            toolchain: stable
+        with:
+          toolchain: stable
 
       - name: build-ffi
         run: make
