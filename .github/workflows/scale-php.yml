@@ -31,16 +31,21 @@ jobs:
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+        with:
+          working-directory: php-scale-codec
 
       - name: Cache dependencies
         uses: actions/cache@v2
         with:
+          working-directory: php-scale-codec
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
         run: composer install --prefer-dist
+        with:
+          working-directory: php-scale-codec
 
       - name: UnitTest
         run: |
