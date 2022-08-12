@@ -27,5 +27,5 @@ jobs:
 
       - name: Test
         run: |
-          ls -l lib
-          make testScaleGo
+          cd scale.go
+          go test -v ./...

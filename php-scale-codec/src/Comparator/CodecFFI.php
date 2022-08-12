@@ -20,85 +20,87 @@ class CodecFFI
         );
     }
 
-    public function CompactU32Encode (): string
+    public function CompactU32Encode (int $value): string
     {
-        $o = $this->FFIInstant->compact_u32_encode(2);
+        $o = $this->FFIInstant->compact_u32_encode($value);
         return FFI::string($o);
     }
 
-    public function CompactU32Decode (): int
+    public function CompactU32Decode (string $raw): int
     {
-        return $this->FFIInstant->compact_u32_decode("08");
+        return $this->FFIInstant->compact_u32_decode($raw);
     }
 
 
-    public function OptionBoolEncode (): string
+    public function OptionBoolEncode (string $value): string
     {
-        $o = $this->FFIInstant->option_bool_encode("None");
+        $o = $this->FFIInstant->option_bool_encode($value);
         return FFI::string($o);
     }
 
-    public function OptionBoolDecode (): string
+    public function OptionBoolDecode (string $raw): string
     {
-        $o = $this->FFIInstant->option_bool_decode("01");
-        return FFI::string($o);
-    }
-
-
-    public function BoolDecode (): bool
-    {
-        return $this->FFIInstant->bool_decode("01");
-    }
-
-    public function BoolEncode (): string
-    {
-        $o = $this->FFIInstant->bool_encode(true);
+        $o = $this->FFIInstant->option_bool_decode($raw);
         return FFI::string($o);
     }
 
 
-    public function ResultEncode (): string
+    public function BoolDecode (string $raw): bool
     {
-        $o = $this->FFIInstant->results_encode(2, "NONE", "OK");
+        return $this->FFIInstant->bool_decode($raw);
+    }
+
+    public function BoolEncode (bool $value): string
+    {
+        $o = $this->FFIInstant->bool_encode($value);
         return FFI::string($o);
     }
 
-    public function ResultDecode (): array
+
+    public function ResultEncode ($value): string
     {
-        $o = $this->FFIInstant->results_decode("0002000000");
+        $o = $this->FFIInstant->results_encode($value, "NONE", "OK");
+        return FFI::string($o);
+    }
+
+    public function ResultDecode (string $raw): array
+    {
+        $o = $this->FFIInstant->results_decode($raw);
         $ok = $o->ok;
         $err = $o->err;
         return ["OK" => $ok, "ERR" => FFI::string($err)];
     }
 
-    public function StructEncode (): string
+    public function StructEncode (array $value): string
     {
         $tv = $this->FFIInstant->new("struct CodecStruct");
-        $tv->data = 10;
-        $tv->other = 1;
+        $tv->data = $value["Data"];
+        $tv->other = $value["Other"];
         $o = $this->FFIInstant->data_struct_encode(FFI::addr($tv));
         return FFI::string($o);
     }
 
-    public function StructDecode (): array
+    public function StructDecode (string $raw): array
     {
-        $o = $this->FFIInstant->data_struct_decode("0a00000001");
+        $o = $this->FFIInstant->data_struct_decode($raw);
         $data = $o->data;
         $other = $o->other;
         return ["Data" => $data, "Other" => $other];
     }
 
-    public function EnumEncode (): string
+    public function EnumEncode (array $value): string
     {
         $tv = $this->FFIInstant->new("struct EnumStruct");
-        $tv->a = 1;
+        $tv->a = $value["a"];
+        $tv->b = $value["b"];
+        $tv->c = $value["c"];
         $o = $this->FFIInstant->data_enum_encode(FFI::addr($tv));
         return FFI::string($o);
     }
 
-    public function EnumDecode (): array
+    public function EnumDecode (string $raw): array
     {
-        $o = $this->FFIInstant->data_enum_decode("0001000000");
+        $o = $this->FFIInstant->data_enum_decode($raw);
         return ["a" => $o->a, "b" => $o->b, "c" => $o->c];
     }
 
@@ -135,7 +137,7 @@ class CodecFFI
         return $r;
     }
 
-    public function VecU32Encode(array $input):string
+    public function VecU32Encode (array $input): string
     {
         $size = count($input);
         $arrayUInt = FFI::new("unsigned int[$size]");
@@ -145,7 +147,7 @@ class CodecFFI
         return FFI::string($this->FFIInstant->vec_u32_encode(FFI::addr($arrayUInt[0]), count($input)));
     }
 
-    public function VecU32Decode(string $input):array
+    public function VecU32Decode (string $input): array
     {
         $fixedUInt = FFI::new("unsigned int[6]");
         $o = $this->FFIInstant->vec_u32_decode($input);;
@@ -158,23 +160,21 @@ class CodecFFI
     }
 
 
-    public function TupleEncode(){
+    public function TupleEncode (array $value)
+    {
         $tv = $this->FFIInstant->new("struct TupleType");
-        $tv->a = 10;
-        $tv->b = 1;
+        $tv->a = $value["A"];
+        $tv->b = $value["B"];
         $o = $this->FFIInstant->tuple_u32u32_encode(FFI::addr($tv));
         return FFI::string($o);
     }
 
-    public function TupleDecode(){
-        $o = $this->FFIInstant->tuple_u32u32_decode("0a00000001000000");
+    public function TupleDecode (string $raw)
+    {
+        $o = $this->FFIInstant->tuple_u32u32_decode($raw);
         $A = $o->a;
         $B = $o->b;
         return ["A" => $A, "B" => $B];
     }
-
-
-
-
 }
 
