@@ -16,7 +16,7 @@ class CodecFFI
         $dirPath = dirname(__FILE__, 4);
         $this->FFIInstant = FFI::cdef(
             file_get_contents($dirPath . "/src/scale_ffi.h"),
-            $dirPath . '/lib/libscale_ffi.dylib'
+            $dirPath . sprintf('/lib/libscale_ffi.%s', PHP_OS == "Darwin" ? "dylib" : "so")
         );
     }
 
