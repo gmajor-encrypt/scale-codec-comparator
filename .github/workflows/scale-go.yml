@@ -27,5 +27,6 @@ jobs:
 
       - name: Test
         run: |
+          
           cd scale.go
           go test -v ./...
