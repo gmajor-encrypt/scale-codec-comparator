@@ -31,8 +31,7 @@ jobs:
       - name: Get composer cache directory
         id: composer-cache
         run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-        with:
-          working-directory: php-scale-codec
+        working-directory: php-scale-codec
 
       - name: Cache dependencies
         uses: actions/cache@v2
@@ -44,8 +43,7 @@ jobs:
 
       - name: Install dependencies
         run: composer install --prefer-dist
-        with:
-          working-directory: php-scale-codec
+        working-directory: php-scale-codec
 
       - name: UnitTest
         run: |
