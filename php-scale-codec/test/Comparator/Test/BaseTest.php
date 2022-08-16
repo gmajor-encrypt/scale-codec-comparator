@@ -5,7 +5,6 @@ namespace Comparator\Test;
 use Codec\Base;
 use Codec\ScaleBytes;
 use Codec\Types\ScaleInstance;
-use phpDocumentor\Reflection\Types\Null_;
 use PHPUnit\Framework\TestCase;
 use Comparator\CodecFFI;
 
@@ -22,7 +21,15 @@ final class BaseTest extends TestCase
     public function initFFI ()
     {
         $this->FFICodec = new CodecFFI();
-        $this->codec = new ScaleInstance(Base::create());
+        $generator = Base::create();
+        Base::regCustom($generator, [
+            // struct
+            "CodecStruct" => ["Data" => "u32", "Other" => "u8"],
+            // enum
+            "EnumStruct" => ["_enum" => ["a" => "u32", "b" => "u32", "c" => "u32"]],
+        ]);
+        $this->codec = new ScaleInstance($generator);
+
     }
 
     public function testCodecCall ()
@@ -80,6 +87,47 @@ final class BaseTest extends TestCase
     {
         $this->assertEquals($this->codec->createTypeByTypeString("bool")->encode(true), $this->FFICodec->BoolEncode(true));
         $this->assertEquals($this->codec->process("bool", new ScaleBytes("01")), $this->FFICodec->BoolDecode("01"));
+    }
+
+
+    public function testResultU32 ()
+    {
+        $this->assertEquals($this->codec->createTypeByTypeString("result<u32,string>")->encode(["Ok" => 2]), $this->FFICodec->ResultEncode(2));
+        $this->assertEquals($this->codec->process("result<u32,string>", new ScaleBytes("0002000000"))['Ok'], $this->FFICodec->ResultDecode("0002000000")['OK']);
+    }
+
+    public function testString ()
+    {
+        $this->assertEquals($this->codec->createTypeByTypeString("string")->encode("Hamlet"), $this->FFICodec->StringEncode("Hamlet"));
+        $this->assertEquals($this->codec->process("string", new ScaleBytes("1848616d6c6574")), $this->FFICodec->StringDecode("1848616d6c6574"));
+    }
+
+    public function testStruct ()
+    {
+        $this->assertEquals($this->codec->process("CodecStruct", new ScaleBytes("0a00000001")), $this->FFICodec->StructDecode("0a00000001"));
+        $this->assertEquals($this->codec->createTypeByTypeString("CodecStruct")->encode(["Data" => 10, "Other" => 1]), $this->FFICodec->StructEncode(["Data" => 10, "Other" => 1]));
+    }
+
+    public function testEnum ()
+    {
+        $this->assertEquals($this->codec->process("EnumStruct", new ScaleBytes("0001000000"))["a"], $this->FFICodec->EnumDecode("0001000000")["a"]);
+        $this->assertEquals($this->codec->createTypeByTypeString("EnumStruct")->encode(["a" => 1]), $this->FFICodec->EnumEncode(["a" => 1, "b" => 0, "c" => 0]));
+    }
+
+    public function testTuple ()
+    {
+        $this->assertEquals(array_values($this->codec->process("(u32,u32)", new ScaleBytes("0a00000001000000"))), array_values($this->FFICodec->TupleDecode("0a00000001000000")));
+        $this->assertEquals($this->codec->createTypeByTypeString("(u32,u32)")->encode([10, 1]), $this->FFICodec->TupleEncode(["A" => 10, "B" => 1]));
+    }
+
+    public function testFixedU32 (){
+        $this->assertEquals( $this->codec->createTypeByTypeString("[u32;6]")->encode([1, 2, 3, 4, 5, 6]),$this->FFICodec->FixU32Encode([1, 2, 3, 4, 5, 6]));
+        $this->assertEquals($this->codec->process("[u32;6]", new ScaleBytes("010000000200000003000000040000000500000006000000")), $this->FFICodec->FixU32Decode("010000000200000003000000040000000500000006000000"));
+    }
+
+    public function testVecU32U32 (){
+        $this->assertEquals($this->codec->createTypeByTypeString("Vec<u32>")->encode([1, 2, 3, 4, 5, 6]), $this->FFICodec->VecU32Encode([1, 2, 3, 4, 5, 6]));
+        $this->assertEquals($this->codec->process("Vec<u32>", new ScaleBytes("18010000000200000003000000040000000500000006000000")), $this->FFICodec->VecU32Decode("18010000000200000003000000040000000500000006000000"));
     }
 
 }
