@@ -25,9 +25,9 @@ jobs:
         with:
           ruby-version: '3.1.2' # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-        - run: bundle install
-
+          
       - name: Test
         run: |
           cd scale.rb
+          bundle install
           bundle exec rspec spec/base_spec.rb
