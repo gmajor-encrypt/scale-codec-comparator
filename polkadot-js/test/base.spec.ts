@@ -45,9 +45,9 @@ let libm = ffi.Library(rootPath + "/lib/libscale_ffi.dylib", {
     'string_encode': ['string', ['string']],
     'string_decode': ['string', ['string']],
     'fixU32_encode': ['string', [ref.refType("uint"), "uint"]],
-    'fixU32_decode': [ref.refType("uint"), ['string']],
+    'fixU32_decode': [ref.refType(ArrayType('uint32')), ['string']],
     'vec_u32_encode': ['string', [ref.refType("uint"), "uint"]],
-    'vec_u32_decode': [ref.refType("uint"), ['string']],
+    'vec_u32_decode': [ref.refType(ArrayType('uint32')), ['string']],
 });
 
 describe('base ffi codec', (): void => {
@@ -163,25 +163,18 @@ describe('base ffi codec', (): void => {
 
     it('decode [u32;6]', (): void => {
         // const buf = Buffer.alloc(ref.sizeof.pointer);
-        const uIntArray = ArrayType('uint32');
         let value = libm.fixU32_decode("010000000200000003000000040000000500000006000000")
-
         let buf = Buffer.alloc(ref.sizeof.pointer);
         buf.writePointer(value);
         let uint32Size = ref.sizeof.uint
         buf = buf.readPointer(0, uint32Size * 6);
-
         const values = [];
         for (let i = 0; i < 6; i++) {
             const ptr = ref.get(buf, i * uint32Size, ref.types.uint);
             values.push(ptr);
         }
-        console.log(values)
-        // ref.writePointer(buf, 0, value)
-        // const out = ref.readPointer(buf, 0, 24);
-
         expect(
-            JSON.stringify([1, 2, 3, 4, 5, 6])
+            [1, 2, 3, 4, 5, 6]
         ).toEqual(values);
     });
 
@@ -195,12 +188,17 @@ describe('base ffi codec', (): void => {
     });
 
     it('decode <u32>', (): void => {
-        const uIntArray = ArrayType('uint32');
         let value = libm.vec_u32_decode("18010000000200000003000000040000000500000006000000")
-        let a = new uIntArray(value)
-        expect(
-            JSON.stringify([1, 2, 3, 4, 5, 6])
-        ).toEqual(a.ref().deref().toJSON());
+        let buf = Buffer.alloc(ref.sizeof.pointer);
+        buf.writePointer(value);
+        let uint32Size = ref.sizeof.uint
+        buf = buf.readPointer(0, uint32Size * 6);
+        const values = [];
+        for (let i = 0; i < 6; i++) {
+            const ptr = ref.get(buf, i * uint32Size, ref.types.uint);
+            values.push(ptr);
+        }
+        expect([1, 2, 3, 4, 5, 6]).toEqual(values);
     });
 
 })

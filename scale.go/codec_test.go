@@ -14,7 +14,7 @@ func TestFFICodec(t *testing.T) {
 	assert.Equal(t, uint(2), CompactU32Decode("08"))
 
 	assert.Equal(t, "00", OptionBoolEncode("NONE"))
-	assert.Equal(t, "true", OptionBoolDecode("01"))
+	assert.Equal(t, true, OptionBoolDecode("01"))
 
 	assert.Equal(t, true, BoolDecode("01"))
 	assert.Equal(t, "01", BoolEncode(true))

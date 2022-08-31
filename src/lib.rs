@@ -200,10 +200,10 @@ pub extern "C" fn string_encode(raw: *const libc::c_char) -> *const libc::c_char
 pub extern "C" fn fixU32_decode(raw: *const libc::c_char) -> *mut u32 {
     let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
     let bytes_raw = hex::decode(str_raw).unwrap();
-    let mut u8_fixed: [u32; 6] = Decode::decode(&mut &bytes_raw[..]).unwrap();
-    println!("fixU32_decode input {:?}",u8_fixed);
-    let ptr = u8_fixed.as_mut_ptr();
-    std::mem::forget(u8_fixed);
+    let mut u32_fixed: [u32; 6] = <[u32;6]>::decode(&mut &bytes_raw[..]).unwrap();
+    let mut u32_vec = u32_fixed.to_vec();
+    let ptr = u32_vec.as_mut_ptr();
+    std::mem::forget(u32_vec);
     ptr
 }
 
@@ -314,6 +314,7 @@ fn codec()
     let encoded = value.encode();
     assert_eq!(hexify(&encoded), "28 00 01 01 02 03 05 08 0d 15 22");
     assert_eq!(<Vec<u8>>::decode(&mut &encoded[..]).unwrap(), value);
+    // assert_eq!::decode(&mut &encoded[..]).unwrap(), value);
 
     // vec<i16>
     let value = vec![0i16, 1, -1, 2, -2, 3, -3];
