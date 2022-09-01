@@ -29,7 +29,7 @@ jobs:
       - name: Test
         run: |
           cd polkadot-js
-          ls -l /home/runner/work/scale-codec-comparator
+          ls -l /home/runner/work/scale-codec-comparator/scale-codec-comparator/lib
           npm install
           npm test
         env:
