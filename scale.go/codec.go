@@ -1,6 +1,8 @@
 package scale_go
 
 /*
+// #cgo linux LDFLAGS: -ldl -Wl,--unresolved-symbols=ignore-in-object-files
+// #cgo darwin LDFLAGS: -ldl -Wl,-undefined,dynamic_lookup
 #cgo LDFLAGS: -L${SRCDIR} -lscale_ffi
 #include <stdlib.h>
 #include "../src/scale_ffi.h"
