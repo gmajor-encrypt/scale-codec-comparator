@@ -3,8 +3,8 @@ name: scale-go-test
 on:
   push:
     branches: [main]
-    paths:
-      - 'scale.go/**'
+#    paths:
+#      - 'scale.go/**'
 
 jobs:
   test:
@@ -29,6 +29,6 @@ jobs:
 
       - name: Test
         run: |
-          
+          ls -l /home/runner/work/scale-codec-comparator/scale-codec-comparator/lib
           cd scale.go
           go test -v ./...

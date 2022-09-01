@@ -1,30 +1,30 @@
 let ffi = require('ffi-napi');
 let path = require('path');
 const ref = require('ref-napi')
-const Struct = require('ref-struct-di')(ref);
+const RefStruct = require('ref-struct-di')(ref);
 const ArrayType = require('ref-array-di')(ref);
-import {Bool, TypeRegistry} from '@polkadot/types';
-import {Compact, U32, bool, Option, Result, Text, Enum} from '@polkadot/types-codec';
+import {Bool, TypeRegistry, u32, U8, u8} from '@polkadot/types';
+import {Compact, U32, bool, Option, Result, Text, Enum, Struct, Tuple, Vec, VecFixed} from '@polkadot/types-codec';
 
 let rootPath = process.env.FFI_PATH || path.resolve(path.dirname(path.dirname(__dirname)))
 
-const resultsType = Struct({
+const resultsType = RefStruct({
     ok: ref.types.uint,
     err: 'string'
 });
 
-const CodecStruct = Struct({
+const CodecStruct = RefStruct({
     data: "uint",
     other: 'uint8'
 });
 
-const EnumStruct = Struct({
+const EnumStruct = RefStruct({
     a: "uint",
     b: 'uint',
     c: 'uint'
 });
 
-const TupleType = Struct({
+const TupleType = RefStruct({
     a: "uint",
     b: 'uint'
 });
@@ -112,20 +112,20 @@ describe('base ffi codec', (): void => {
             (new ResultU32Err(registry, toU8a("0002000000"))).toJSON()
         ).toEqual(result);
     });
-
+    const PStruct = Struct.with({data: U32, other: U8})
     it('encode struct', (): void => {
         const st = new CodecStruct;
         st.data = 10;
         st.other = 1;
         expect(
-            "0a00000001"
+            tohex(new PStruct(registry, {data: 10, other: 1}).toU8a())
         ).toEqual(libm.data_struct_encode(st.ref()));
     });
     it('decode struct', (): void => {
-        let value = libm.data_struct_decode("0a00000001")
+        let value = libm.data_struct_decode("0a00000001").deref().toJSON()
         expect(
-            {"data": 10, "other": 1}
-        ).toEqual(value.deref().toJSON());
+            (new PStruct(registry, toU8a("0a00000001"))).toJSON()
+        ).toEqual(value);
     });
 
     const PEnum = Enum.with({a: U32, b: U32, c: U32});
@@ -145,20 +145,20 @@ describe('base ffi codec', (): void => {
         ).toEqual(value);
     });
 
-
+    const PTuple = Tuple.with([U32, U32]);
     it('encode (u32,u32)', (): void => {
         const st = new TupleType;
         st.a = 10;
         st.b = 1;
         expect(
-            "0a00000001000000"
+            tohex(new PTuple(registry, [10, 1]).toU8a())
         ).toEqual(libm.tuple_u32u32_encode(st.ref()));
     });
     it('decode (u32,u32)', (): void => {
-        let value = libm.tuple_u32u32_decode("0a00000001000000")
+        let value = libm.tuple_u32u32_decode("0a00000001000000").deref().toJSON()
         expect(
-            {"a": 10, "b": 1}
-        ).toEqual(value.deref().toJSON());
+            (new PTuple(registry, toU8a("0a00000001000000"))).toJSON()
+        ).toEqual([value["a"], value["b"]]);
     });
 
     it('encodes string', (): void => {
@@ -172,12 +172,13 @@ describe('base ffi codec', (): void => {
         ).toEqual(libm.string_decode("1848616d6c6574"));
     });
 
+      const VecFixedU32 = VecFixed.with(U32,6);
     it('encode [u32;6]', (): void => {
         const IntArray = ArrayType('uint32');
         // @ts-ignore
         const array = new IntArray([1, 2, 3, 4, 5, 6]);
         expect(
-            "010000000200000003000000040000000500000006000000"
+            tohex(new VecFixedU32(registry, [1, 2, 3, 4, 5, 6]).toU8a())
         ).toEqual(libm.fixU32_encode(array.buffer, 6));
     });
 
@@ -194,16 +195,16 @@ describe('base ffi codec', (): void => {
             values.push(ptr);
         }
         expect(
-            [1, 2, 3, 4, 5, 6]
+            (new VecFixedU32(registry, toU8a("010000000200000003000000040000000500000006000000"))).toJSON()
         ).toEqual(values);
     });
 
-
+    const VecU32 = Vec.with(u32);
     it('encode vec<u32>', (): void => {
         const IntArray = ArrayType('uint32');
         const array = new IntArray([1, 2, 3, 4, 5, 6]);
         expect(
-            "18010000000200000003000000040000000500000006000000"
+            tohex(new VecU32(registry, [1, 2, 3, 4, 5, 6]).toU8a())
         ).toEqual(libm.vec_u32_encode(array.buffer, 6));
     });
 
@@ -218,7 +219,7 @@ describe('base ffi codec', (): void => {
             const ptr = ref.get(buf, i * uint32Size, ref.types.uint);
             values.push(ptr);
         }
-        expect([1, 2, 3, 4, 5, 6]).toEqual(values);
+        expect((new VecU32(registry, toU8a("18010000000200000003000000040000000500000006000000"))).toJSON()).toEqual(values);
     });
 
 })
