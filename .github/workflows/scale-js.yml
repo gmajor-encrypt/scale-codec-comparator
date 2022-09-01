@@ -3,8 +3,8 @@ name: scale-js-test
 on:
   push:
     branches: [main]
-#    paths:
-#      - 'polkadot-js/**'
+    paths:
+      - 'polkadot-js/**'
 jobs:
   test:
     name: Build and TEST
