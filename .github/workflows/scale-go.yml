@@ -23,7 +23,7 @@ jobs:
       - name: build-ffi
         run: make
 
-      - uses: actions/setup-go@v1
+      - uses: actions/setup-go@v3
         with:
           go-version: 1.17.10
 
