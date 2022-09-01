@@ -3,6 +3,8 @@ name: scale-go-test
 on:
   push:
     branches: [main]
+    paths:
+      - 'scale.go/**'
 
 jobs:
   test:

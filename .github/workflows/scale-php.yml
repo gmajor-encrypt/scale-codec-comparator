@@ -3,6 +3,8 @@ name: scale-php-test
 on:
   push:
     branches: [main]
+    paths:
+      - 'php-scale-codec/**'
 
 jobs:
   test:
