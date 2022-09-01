@@ -20,8 +20,8 @@ jobs:
           toolchain: stable
           default: true
 
-#      - name: build-ffi
-#        run: make
+      - name: build-ffi
+        run: make
 
       - uses: actions/setup-go@v1
         with:
