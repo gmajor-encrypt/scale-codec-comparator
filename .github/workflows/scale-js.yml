@@ -33,4 +33,4 @@ jobs:
           npm install
           npm test
         env:
-          FFI_PATH: /home/runner/work/scale-codec-comparator
+          FFI_PATH: /home/runner/work/scale-codec-comparator/scale-codec-comparator
