@@ -29,6 +29,7 @@ jobs:
       - name: Test
         run: |
           cd polkadot-js
+          ls -l /home/runner/work/scale-codec-comparator/lib/libscale_ffi.dylib.so
           npm install
           npm test
         env:
