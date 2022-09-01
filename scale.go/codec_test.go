@@ -5,6 +5,7 @@ import (
 
 	"github.com/itering/scale.go/source"
 	"github.com/itering/scale.go/types"
+	"github.com/itering/scale.go/types/scaleBytes"
 	"github.com/itering/scale.go/utiles"
 	"github.com/stretchr/testify/assert"
 )
@@ -41,42 +42,41 @@ func TestFFICodec(t *testing.T) {
 	assert.Equal(t, "0a00000001000000", TupleEncode(&TupleType{A: 10, B: 1}))
 }
 
-
 func TestCompactU32(t *testing.T) {
 	m := types.ScaleDecoder{}
-	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("08")}, nil)
+	m.Init(scaleBytes.ScaleBytes{Data: utiles.HexToBytes("08")}, nil)
 	assert.Equal(t, CompactU32Decode("08"), uint(m.ProcessAndUpdateData("Compact<u32>").(int)))
 	assert.Equal(t, CompactU32Encode(2), types.Encode("Compact<u32>", 2))
 }
 
 func TestOptionBool(t *testing.T) {
 	m := types.ScaleDecoder{}
-	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("01")}, nil)
+	m.Init(scaleBytes.ScaleBytes{Data: utiles.HexToBytes("01")}, nil)
 	assert.EqualValues(t, OptionBoolDecode("01"), m.ProcessAndUpdateData("Option<bool>"))
-	assert.Equal(t, OptionBoolEncode("01"), types.Encode("Option<bool>", true))
+	assert.Equal(t, OptionBoolEncode("true"), types.Encode("Option<bool>", true))
 }
 
 func TestBool(t *testing.T) {
 	m := types.ScaleDecoder{}
-	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("01")}, nil)
-	assert.EqualValues(t, OptionBoolDecode("01"), m.ProcessAndUpdateData("bool"))
-	assert.Equal(t, OptionBoolEncode("true"), types.Encode("bool", true))
+	m.Init(scaleBytes.ScaleBytes{Data: utiles.HexToBytes("01")}, nil)
+	assert.EqualValues(t, BoolDecode("01"), m.ProcessAndUpdateData("bool"))
+	assert.Equal(t, BoolEncode(true), types.Encode("bool", true))
 }
 
 func TestResultsU32Err(t *testing.T) {
 	m := types.ScaleDecoder{}
-	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("0002000000")}, nil)
-	goResultValue := m.ProcessAndUpdateData("results<u32,string>").(map[string]interface{})
+	m.Init(scaleBytes.ScaleBytes{Data: utiles.HexToBytes("0002000000")}, nil)
+	goResultValue := m.ProcessAndUpdateData("Result<u32,string>").(map[string]interface{})
 	ffiValue := ResultDecode("0002000000")
 	assert.EqualValues(t, ffiValue.Ok, goResultValue["Ok"].(uint32))
-	assert.Equal(t, ResultEncode(2), types.Encode("results<u32,string>", 2))
+	assert.Equal(t, ResultEncode(2), types.Encode("Result<u32,string>", map[string]interface{}{"Ok": 2}))
 }
 
 func TestStruct(t *testing.T) {
 	m := types.ScaleDecoder{}
-	types.RuntimeType{}.Reg()
+	// types.RuntimeType{}.Reg()
 	types.RegCustomTypes(source.LoadTypeRegistry([]byte(`{"t": {"type": "struct","type_mapping": [["Data","u32"],["Other","u8"]]}}`)))
-	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("0a00000001")}, nil)
+	m.Init(scaleBytes.ScaleBytes{Data: utiles.HexToBytes("0a00000001")}, nil)
 	goStructValue := m.ProcessAndUpdateData("t").(map[string]interface{})
 	ffiValue := StructDecode("0a00000001")
 	assert.EqualValues(t, ffiValue.Data, goStructValue["Data"].(uint32))
@@ -86,9 +86,9 @@ func TestStruct(t *testing.T) {
 
 func TestEnum(t *testing.T) {
 	m := types.ScaleDecoder{}
-	types.RuntimeType{}.Reg()
+	// types.RuntimeType{}
 	types.RegCustomTypes(source.LoadTypeRegistry([]byte(`{"te": {"type": "enum","type_mapping": [["A","u32"],["B","u32"],["C","u32"]]}}`)))
-	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("0001000000")}, nil)
+	m.Init(scaleBytes.ScaleBytes{Data: utiles.HexToBytes("0001000000")}, nil)
 	goStructValue := m.ProcessAndUpdateData("te").(map[string]interface{})
 	ffiValue := EnumDecode("0001000000")
 	assert.EqualValues(t, ffiValue.A, goStructValue["A"].(uint32))
@@ -97,36 +97,36 @@ func TestEnum(t *testing.T) {
 
 func TestString(t *testing.T) {
 	m := types.ScaleDecoder{}
-	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("1848616d6c6574")}, nil)
+	m.Init(scaleBytes.ScaleBytes{Data: utiles.HexToBytes("1848616d6c6574")}, nil)
 	assert.Equal(t, StringDecode("1848616d6c6574"), m.ProcessAndUpdateData("String").(string))
 	assert.Equal(t, StringEncode("Hamlet"), types.Encode("String", "Hamlet"))
 }
 
 func TestFixedU32(t *testing.T) {
 	m := types.ScaleDecoder{}
-	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("010000000200000003000000040000000500000006000000")}, nil)
+	m.Init(scaleBytes.ScaleBytes{Data: utiles.HexToBytes("010000000200000003000000040000000500000006000000")}, nil)
 	var uintArr []uint
 	for _, v := range m.ProcessAndUpdateData("[u32; 6]").([]interface{}) {
 		uintArr = append(uintArr, uint(v.(uint32)))
 	}
 	assert.EqualValues(t, FixU32Decode("010000000200000003000000040000000500000006000000"), uintArr)
-	assert.Equal(t, FixU32Encode([6]uint32{1, 2, 3, 4, 5, 6}), types.Encode("[u32; 6]", []uint{1, 2, 3, 4, 5, 6}))
+	assert.Equal(t, FixU32Encode([6]uint32{1, 2, 3, 4, 5, 6}), types.Encode("[u32; 6]", []int{1, 2, 3, 4, 5, 6}))
 }
 
 func TestVecU32(t *testing.T) {
 	m := types.ScaleDecoder{}
-	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("18010000000200000003000000040000000500000006000000")}, nil)
+	m.Init(scaleBytes.ScaleBytes{Data: utiles.HexToBytes("18010000000200000003000000040000000500000006000000")}, nil)
 	var uintArr []uint
 	for _, v := range m.ProcessAndUpdateData("Vec<u32>").([]interface{}) {
 		uintArr = append(uintArr, uint(v.(uint32)))
 	}
 	assert.EqualValues(t, VecU32Decode("18010000000200000003000000040000000500000006000000"), uintArr)
-	assert.Equal(t, VecU32Encode([]uint32{1, 2, 3, 4, 5, 6}), types.Encode("Vec<u32>", []uint{1, 2, 3, 4, 5, 6}))
+	assert.Equal(t, VecU32Encode([]uint32{1, 2, 3, 4, 5, 6}), types.Encode("Vec<u32>", []uint32{1, 2, 3, 4, 5, 6}))
 }
 
 func TestTupleU32U32(t *testing.T) {
 	m := types.ScaleDecoder{}
-	m.Init(types.ScaleBytes{Data: utiles.HexToBytes("0a00000001000000")}, nil)
+	m.Init(scaleBytes.ScaleBytes{Data: utiles.HexToBytes("0a00000001000000")}, nil)
 	tupleValue := TupleDecode("0a00000001000000")
 	goTupleDecodeValue := m.ProcessAndUpdateData("(u32,u32)")
 	assert.EqualValues(t, tupleValue.A, goTupleDecodeValue.(map[string]interface{})["col1"])

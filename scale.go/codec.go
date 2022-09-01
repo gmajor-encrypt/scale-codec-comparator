@@ -3,7 +3,7 @@ package scale_go
 /*
 // #cgo linux LDFLAGS: -ldl -Wl,-rpath,$ORIGIN
 // #cgo darwin LDFLAGS: -ldl -Wl,-undefined,dynamic_lookup
-#cgo LDFLAGS: -L${SRCDIR} -lscale_ffi
+#cgo LDFLAGS: -L../lib -lscale_ffi
 #include <stdlib.h>
 #include "../src/scale_ffi.h"
 */
