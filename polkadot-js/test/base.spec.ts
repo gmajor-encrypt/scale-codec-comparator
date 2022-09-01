@@ -3,6 +3,8 @@ let path = require('path');
 const ref = require('ref-napi')
 const Struct = require('ref-struct-di')(ref);
 const ArrayType = require('ref-array-di')(ref);
+import {TypeRegistry} from '@polkadot/types';
+import {Compact, U32} from '@polkadot/types-codec';
 
 let rootPath = path.resolve(path.dirname(path.dirname(__dirname)))
 
@@ -50,18 +52,27 @@ let libm = ffi.Library(rootPath + "/lib/libscale_ffi.dylib", {
     'vec_u32_decode': [ref.refType(ArrayType('uint32')), ['string']],
 });
 
-describe('base ffi codec', (): void => {
+function tohex(u8a) {
+    return Buffer.from(u8a).toString('hex')
+}
 
-    it('encodes u32', (): void => {
+
+// api.createType('Balance', 123);
+describe('base ffi codec', (): void => {
+    const registry = new TypeRegistry();
+    // Compact<U32>
+    it('encodes compact<u32>', (): void => {
         expect(
-            "08"
+            tohex(new (Compact.with(U32))(registry, 2).toU8a())
         ).toEqual(libm.compact_u32_encode(2));
     });
-    it('decode u32', (): void => {
+    it('decode compact<u32>', (): void => {
         expect(
-            2
+            new (Compact.with(U32))(registry, new Uint8Array([8])).toNumber()
         ).toEqual(libm.compact_u32_decode("08"));
     });
+
+
     it('encodes option<bool>', (): void => {
         expect(
             "00"
@@ -165,9 +176,9 @@ describe('base ffi codec', (): void => {
         // const buf = Buffer.alloc(ref.sizeof.pointer);
         let value = libm.fixU32_decode("010000000200000003000000040000000500000006000000")
         let buf = Buffer.alloc(ref.sizeof.pointer);
-        buf.writePointer(value);
+        ref.writePointer(buf, 0, value);
         let uint32Size = ref.sizeof.uint
-        buf = buf.readPointer(0, uint32Size * 6);
+        buf = ref.readPointer(buf, 0, uint32Size * 6);
         const values = [];
         for (let i = 0; i < 6; i++) {
             const ptr = ref.get(buf, i * uint32Size, ref.types.uint);
@@ -190,9 +201,9 @@ describe('base ffi codec', (): void => {
     it('decode <u32>', (): void => {
         let value = libm.vec_u32_decode("18010000000200000003000000040000000500000006000000")
         let buf = Buffer.alloc(ref.sizeof.pointer);
-        buf.writePointer(value);
+        ref.writePointer(buf, 0, value);
         let uint32Size = ref.sizeof.uint
-        buf = buf.readPointer(0, uint32Size * 6);
+        buf = ref.readPointer(buf, 0, uint32Size * 6);
         const values = [];
         for (let i = 0; i < 6; i++) {
             const ptr = ref.get(buf, i * uint32Size, ref.types.uint);
