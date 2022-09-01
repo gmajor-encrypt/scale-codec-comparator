@@ -6,4 +6,6 @@ WORKDIR /app
 COPY scale.go .
 RUN go mod download -x
 
+
+RUN ls -l
 RUN go test -v ./...
