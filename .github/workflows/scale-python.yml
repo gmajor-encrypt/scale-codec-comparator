@@ -3,8 +3,8 @@ name: scale-python-test
 on:
   push:
     branches: [main]
-    paths:
-      - 'py-scale-codec/**'
+#     paths:
+#       - 'py-scale-codec/**'
 jobs:
   test:
     name: Build and TEST
