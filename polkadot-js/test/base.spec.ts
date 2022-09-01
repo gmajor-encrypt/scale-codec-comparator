@@ -3,8 +3,8 @@ let path = require('path');
 const ref = require('ref-napi')
 const Struct = require('ref-struct-di')(ref);
 const ArrayType = require('ref-array-di')(ref);
-import {TypeRegistry} from '@polkadot/types';
-import {Compact, U32} from '@polkadot/types-codec';
+import {Bool, TypeRegistry} from '@polkadot/types';
+import {Compact, U32, bool, Option, Result, Text} from '@polkadot/types-codec';
 
 let rootPath = process.env.FFI_PATH || path.resolve(path.dirname(path.dirname(__dirname)))
 
@@ -56,6 +56,10 @@ function tohex(u8a) {
     return Buffer.from(u8a).toString('hex')
 }
 
+function toU8a(hexString) {
+    return Uint8Array.from(Buffer.from(hexString, 'hex'));
+}
+
 
 // api.createType('Balance', 123);
 describe('base ffi codec', (): void => {
@@ -75,36 +79,38 @@ describe('base ffi codec', (): void => {
 
     it('encodes option<bool>', (): void => {
         expect(
-            "00"
+            tohex(new Option(registry, bool, null).toU8a())
         ).toEqual(libm.option_bool_encode("NONE"));
     });
     it('decode option<bool>', (): void => {
         expect(
-            "true"
-        ).toEqual(libm.option_bool_decode("01"));
+            new Option(registry, bool, new Uint8Array([1, 1])).toHuman()
+        ).toEqual(libm.option_bool_decode("01") === 'true');
     });
     it('encodes bool', (): void => {
         expect(
-            "01"
+            tohex(new Bool(registry, true).toU8a())
         ).toEqual(libm.bool_encode(true));
     });
     it('decode bool', (): void => {
         expect(
-            true
+            new Bool(registry, new Uint8Array([1])).toHuman()
         ).toEqual(libm.bool_decode("01"));
     });
 
+    const ResultU32Err = Result.with({Err: Text, Ok: U32});
     it('encode result<u32,string>', (): void => {
         expect(
-            "0002000000"
+            tohex(new ResultU32Err(registry, {Ok: 2}).toU8a())
         ).toEqual(libm.results_encode(2, "NONE", "OK"));
     });
 
     it('decode result<u32,string>', (): void => {
-        let result = libm.results_decode("0002000000")
+        let result = libm.results_decode("0002000000").deref().toJSON()
+        delete result["err"]
         expect(
-            {"err": "", "ok": 2}
-        ).toEqual(result.deref().toJSON());
+            (new ResultU32Err(registry,toU8a("0002000000"))).toJSON()
+        ).toEqual(result);
     });
 
     it('encode struct', (): void => {
