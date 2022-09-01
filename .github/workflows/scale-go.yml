@@ -29,6 +29,4 @@ jobs:
 
       - name: Test
         run: |
-          ls -l /go/src/
-          cd scale.go
-          go test -v ./...
+          make testScaleGo
