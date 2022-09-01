@@ -4,7 +4,7 @@ const ref = require('ref-napi')
 const Struct = require('ref-struct-di')(ref);
 const ArrayType = require('ref-array-di')(ref);
 import {Bool, TypeRegistry} from '@polkadot/types';
-import {Compact, U32, bool, Option, Result, Text} from '@polkadot/types-codec';
+import {Compact, U32, bool, Option, Result, Text, Enum} from '@polkadot/types-codec';
 
 let rootPath = process.env.FFI_PATH || path.resolve(path.dirname(path.dirname(__dirname)))
 
@@ -29,7 +29,7 @@ const TupleType = Struct({
     b: 'uint'
 });
 
-let libm = ffi.Library(rootPath + "/lib/libscale_ffi.dylib", {
+let libm = ffi.Library(rootPath + "/lib/libscale_ffi", {
     'compact_u32_encode': ['string', ['uint']],
     'compact_u32_decode': ['uint', ['string']],
     'option_bool_encode': ['string', ['string']],
@@ -109,7 +109,7 @@ describe('base ffi codec', (): void => {
         let result = libm.results_decode("0002000000").deref().toJSON()
         delete result["err"]
         expect(
-            (new ResultU32Err(registry,toU8a("0002000000"))).toJSON()
+            (new ResultU32Err(registry, toU8a("0002000000"))).toJSON()
         ).toEqual(result);
     });
 
@@ -128,18 +128,21 @@ describe('base ffi codec', (): void => {
         ).toEqual(value.deref().toJSON());
     });
 
+    const PEnum = Enum.with({a: U32, b: U32, c: U32});
     it('encode enum', (): void => {
         const st = new EnumStruct;
         st.a = 1;
         expect(
-            "0001000000"
+            tohex(new PEnum(registry, {a: 1}).toU8a())
         ).toEqual(libm.data_enum_encode(st.ref()));
     });
     it('decode enum', (): void => {
-        let value = libm.data_enum_decode("0001000000")
+        let value = libm.data_enum_decode("0001000000").deref().toJSON()
+        delete value["b"]
+        delete value["c"]
         expect(
-            {"a": 1, "b": 0, "c": 0}
-        ).toEqual(value.deref().toJSON());
+            (new PEnum(registry, toU8a("0001000000"))).toJSON()
+        ).toEqual(value);
     });
 
 
@@ -160,12 +163,12 @@ describe('base ffi codec', (): void => {
 
     it('encodes string', (): void => {
         expect(
-            "1848616d6c6574"
+            tohex(new Text(registry, "Hamlet").toU8a())
         ).toEqual(libm.string_encode("Hamlet"));
     });
     it('decode string', (): void => {
         expect(
-            "Hamlet"
+            (new Text(registry, toU8a("1848616d6c6574"))).toJSON()
         ).toEqual(libm.string_decode("1848616d6c6574"));
     });
 
