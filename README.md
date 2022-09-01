@@ -11,17 +11,17 @@ scale-codec-comparator provides the FFI function of some functions of the parity
 
 The tests of the following scale libraries have been completed
 
--[x] scale.go
--[x] scale.rb
--[x] php-scale-codec
--[x] polkadot-js
--[x] py-scale-codec
--[ ] cScale
--[ ] as-scale-codec
--[ ] hs-web3
--[ ] polkaj
--[ ] scale-codec-cpp
--[ ] scale-ts
+- [x] scale.go
+- [x] scale.rb
+- [x] php-scale-codec
+- [x] polkadot-js
+- [x] py-scale-codec
+- [ ] cScale
+- [ ] as-scale-codec
+- [ ] hs-web3
+- [ ] polkaj
+- [ ] scale-codec-cpp
+- [ ] scale-ts
 
 
 ### build
