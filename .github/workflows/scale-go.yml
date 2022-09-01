@@ -29,6 +29,6 @@ jobs:
 
       - name: Test
         run: |
-          ls -l /home/runner/work/scale-codec-comparator/scale-codec-comparator/lib
+          ls -l /go/src/
           cd scale.go
           go test -v ./...
