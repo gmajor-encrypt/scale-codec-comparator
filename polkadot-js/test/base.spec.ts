@@ -6,7 +6,7 @@ const ArrayType = require('ref-array-di')(ref);
 import {TypeRegistry} from '@polkadot/types';
 import {Compact, U32} from '@polkadot/types-codec';
 
-let rootPath = path.resolve(path.dirname(path.dirname(__dirname)))
+let rootPath = process.env.FFI_PATH || path.resolve(path.dirname(path.dirname(__dirname)))
 
 const resultsType = Struct({
     ok: ref.types.uint,

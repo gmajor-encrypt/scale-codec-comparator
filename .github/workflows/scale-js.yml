@@ -31,3 +31,5 @@ jobs:
           cd polkadot-js
           npm install
           npm test
+        env:
+          FFI_PATH: /home/runner/work/scale-codec-comparator
