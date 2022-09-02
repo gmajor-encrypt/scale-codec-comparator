@@ -1,4 +1,4 @@
-## scale-codec-comparator
+# scale-codec-comparator
 
 [![scale-go-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-go.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-go.yml)
 [![scale-php-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-php.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-php.yml)
@@ -24,15 +24,15 @@ The tests of the following scale libraries have been completed
 - [ ] scale-ts
 
 
-### build
+## Build
 
 ```bash
 make
 ```
 
-### how to test
+## How to test
 
-#### scale.go
+### scale.go
 ```bash
 cd scale.go && go test -v ./...
 ```
@@ -59,13 +59,6 @@ cd polkadot-js && npm install && npm run test
  cd py-scale-codec && pip install -r requirements.txt && python -m unittest discover
 ```
 
-
-### proposal
-
-There are more than 10 published implementations of the SCALE Codec. Since each is implemented by a different team & the
-reference implementation still introduces small fixes, it would be beneficial to compile a table of
-feature-completeness. This would provide (some) assurance that the implementation in a given language is safe & sound to
-use.
 
 
 ## License
