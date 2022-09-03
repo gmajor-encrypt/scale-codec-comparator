@@ -7,9 +7,12 @@
 [![scale-js-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-js.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-js.yml)
 
 
+To date, there are [10 published](https://docs.substrate.io/reference/scale-codec/) implementations of the SCALE Codec. Since each is implemented by a different team & [the reference implementation](https://github.com/paritytech/parity-scale-codec) still introduces small fixes,
+it would be beneficial to compile a table of feature-completeness. This would provide (some) assurance that the implementation in a given language is safe & sound to use.
+
 Scale-codec-comarator provides the FFI function of the parity-scale-codec library, which can compare the implementation results of various SCALE Codecs
 
-GitHub action is integrated to run unit tests using the FFI of Rust lib
+[GitHub action](https://github.com/gmajor-encrypt/scale-codec-comparator/tree/main/.github/workflows) is integrated to run unit tests using the FFI of Rust lib
 
 The tests of the following scale libraries have been completed
 
@@ -34,28 +37,31 @@ make
 
 ## How to test
 
+The FFI are definitions here https://github.com/gmajor-encrypt/scale-codec-comparator/blob/main/src/scale_ffi.h
+
+
 ### scale.go
 ```bash
 cd scale.go && go test -v ./...
 ```
 
-#### php-scale-codec
+### php-scale-codec
 ```bash
 cd php-scale-codec && composer install && make
 ```
 
-#### scale.rb
+### scale.rb
 ```bash
 cd scale.rb && bundle install && bundle exec rspec spec/base_spec.rb
 ```
 
-#### polkadot-js
+### polkadot-js
 
 ```bash
 cd polkadot-js && npm install && npm run test
 ```
 
-#### py-scale-codec
+### py-scale-codec
 
 ```bash
  cd py-scale-codec && pip install -r requirements.txt && python -m unittest discover
