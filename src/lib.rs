@@ -75,30 +75,21 @@ pub struct ResultsType {
     err: *const libc::c_char,
 }
 
-
 // results define result<u32,Err>
 // result can be Err or Ok, err_message is err message
 #[no_mangle]
-pub extern "C" fn results_encode(u32: u32, err_message: *const libc::c_char, result: *const libc::c_char) -> *const libc::c_char {
-    let cstr_result = unsafe { CStr::from_ptr(result) };
-    let str_result = cstr_result.to_str().unwrap();
-    let ok: Result<u32, &str> = Ok(u32);
-    let cstr_err = unsafe { CStr::from_ptr(err_message) };
+pub extern "C" fn results_encode(ptr: *mut ResultsType) -> *const libc::c_char {
+    assert!(!ptr.is_null());
+    let value = unsafe { &mut *ptr };
+    let ok: Result<u32, &str> = Ok(value.ok);
+    let cstr_err = unsafe { CStr::from_ptr(value.err) };
     let str_err = cstr_err.to_str().unwrap();
     let err: Result<u32, &str> = Err(str_err);
-    let result_string = match str_result {
-        "Ok" => CString::new(hex::encode(ok.encode())).unwrap().into_raw(),
-        "Err" => CString::new(hex::encode(err.encode())).unwrap().into_raw(),
-        _ => CString::new(hex::encode(ok.encode())).unwrap().into_raw(),
+    let result_string = match str_err.is_empty() {
+        true => CString::new(hex::encode(ok.encode())).unwrap().into_raw(),
+        false => CString::new(hex::encode(err.encode())).unwrap().into_raw(),
     };
     result_string
-}
-
-#[repr(C)]
-#[derive(Debug, PartialEq, Encode, Decode)]
-pub enum ResultEnumType {
-    Ok(u32),
-    Err(String),
 }
 
 #[no_mangle]
@@ -200,7 +191,7 @@ pub extern "C" fn string_encode(raw: *const libc::c_char) -> *const libc::c_char
 pub extern "C" fn fixU32_decode(raw: *const libc::c_char) -> *mut u32 {
     let str_raw = unsafe { CStr::from_ptr(raw) }.to_str().unwrap().to_string();
     let bytes_raw = hex::decode(str_raw).unwrap();
-    let mut u32_fixed: [u32; 6] = <[u32;6]>::decode(&mut &bytes_raw[..]).unwrap();
+    let mut u32_fixed: [u32; 6] = <[u32; 6]>::decode(&mut &bytes_raw[..]).unwrap();
     let mut u32_vec = u32_fixed.to_vec();
     let ptr = u32_vec.as_mut_ptr();
     std::mem::forget(u32_vec);

@@ -36,7 +36,7 @@ let libm = ffi.Library(rootPath + "/lib/libscale_ffi", {
     'option_bool_decode': ['string', ['string']],
     'bool_encode': ['string', [ffi.types.bool]],
     'bool_decode': [ffi.types.bool, ['string']],
-    'results_encode': ['string', ['uint', 'string', 'string']],
+    'results_encode': ['string', [ref.refType(resultsType)]],
     'results_decode': [ref.refType(resultsType), ['string']],
     'data_struct_encode': ['string', [ref.refType(CodecStruct)]],
     'data_struct_decode': [ref.refType(CodecStruct), ['string']],
@@ -100,9 +100,12 @@ describe('base ffi codec', (): void => {
 
     const ResultU32Err = Result.with({Err: Text, Ok: U32});
     it('encode result<u32,string>', (): void => {
+        const st = new resultsType;
+        st.ok = 2;
+        st.err = "";
         expect(
             tohex(new ResultU32Err(registry, {Ok: 2}).toU8a())
-        ).toEqual(libm.results_encode(2, "NONE", "OK"));
+        ).toEqual(libm.results_encode(st.ref()));
     });
 
     it('decode result<u32,string>', (): void => {

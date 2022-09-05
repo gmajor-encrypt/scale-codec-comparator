@@ -53,7 +53,10 @@ type ResultsType struct {
 }
 
 func ResultEncode(data uint) string {
-	o := C.results_encode(C.uint(data), C.CString("None"), C.CString("OK"))
+	var s C.struct_ResultsType
+	s.ok = C.uint(data)
+	s.err = C.CString("")
+	o := C.results_encode(&s)
 	return C.GoString(o)
 }
 

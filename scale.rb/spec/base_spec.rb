@@ -2,7 +2,7 @@ require "scale"
 
 class ResultsType < FFI::Struct
   layout :ok,  :uint32,
-         :err,       :string
+         :err,       :pointer
 end
 
 class CodecStruct < FFI::Struct
@@ -34,7 +34,7 @@ module Rust
   attach_function :bool_decode, %i[string], :bool
   attach_function :bool_encode, %i[bool], :string
 
-  attach_function :results_encode, %i[uint32 string string], :string
+  attach_function :results_encode, [ResultsType.by_ref], :string
   attach_function :results_decode, %i[string], ResultsType.by_ref
 
   attach_function :data_struct_encode, [CodecStruct.by_ref], :string
@@ -79,9 +79,14 @@ RSpec.describe Scale::Types do
       expect(Rust.bool_encode(true)).to eq("01")
 
       # results
-      expect(Rust.results_encode(2,"None","OK")).to eq("0002000000")
+      rt = ResultsType.new
+      rt[:ok] = 2
+      rt[:err] = FFI::MemoryPointer.from_string("")
+      expect(Rust.results_encode(rt)).to eq("0002000000")
+
       results_output = Rust.results_decode("0002000000")
-      expect(:Ok=>results_output[:ok],:Err=>results_output[:err]).to eq({:Ok=>2,:Err=>""})
+      expect(:Ok=>results_output[:ok]).to eq({:Ok=>2})
+
 
       # struct
       struct_output = Rust.data_struct_decode("0a00000001")
@@ -126,7 +131,7 @@ RSpec.describe Scale::Types do
       vec_u32 = [1, 2, 3, 4, 5, 6]
       size = vec_u32.size
       ptr_vec = FFI::MemoryPointer.new :uint32, size
-      ptr_vec.put_array_of_uint32 0, fixed_arr
+      ptr_vec.put_array_of_uint32 0, vec_u32
       expect(Rust.vec_u32_encode(ptr_vec,size)).to eq("18010000000200000003000000040000000500000006000000")
 
       vec_u32_output =  Rust.vec_u32_decode("18010000000200000003000000040000000500000006000000")
@@ -175,13 +180,14 @@ RSpec.describe Scale::Types do
     # vec<u32>
     vec_u32 = [1, 2, 3, 4, 5, 6]
     size = vec_u32.size
-    ptr_vec = FFI::MemoryPointer.new :uint32, size
-    ptr_vec.put_array_of_uint32 0, fixed_arr
-    expect(Rust.vec_u32_encode(ptr_vec,size)).to eq(Scale::Types.get("Vec<U8>").new(vec_u32).encode)
-
+    # ptr_vec = FFI::MemoryPointer.new :uint32, size
+    # ptr_vec.put_array_of_uint32 0, vec_u32
+    # Scale::Types.get("Vec<U32>").new(vec_u32).encode
+    # expect(Rust.vec_u32_encode(ptr_vec,size)).to eq("")
+    # size = vec_u32.size
     vec_u32_output =  Rust.vec_u32_decode("18010000000200000003000000040000000500000006000000")
     result_array = vec_u32_output.read_array_of_uint32(size)
-    expect(result_array).to eq( Scale::Types.get("Vec<U8>").decode(Scale::Bytes.new("0x18010000000200000003000000040000000500000006000000")))
+    expect(result_array).to eq( Scale::Types.get("Vec<U32>").decode(Scale::Bytes.new("0x18010000000200000003000000040000000500000006000000")).value.map{|x|x.value})
   end
   #
   it "FFI codec output compare with scala.rb, result types should support" do

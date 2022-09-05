@@ -22,8 +22,11 @@ struct ResultsType {
   unsigned int ok;
   char* err;
 };
+
+
+
 // encode for results<u32,string>
-char* results_encode(unsigned int u,char* err,char* result);
+char* results_encode(struct ResultsType* raw);
 // decode for results<u32,string>
 struct ResultsType* results_decode(char* raw);
 

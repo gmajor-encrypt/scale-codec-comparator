@@ -59,7 +59,11 @@ class CodecFFI
 
     public function ResultEncode ($value): string
     {
-        $o = $this->FFIInstant->results_encode($value, "NONE", "OK");
+        $tv = $this->FFIInstant->new("struct ResultsType");
+        $tv->ok = $value;
+        $tv->err =  $this->FFIInstant->new('char[1]', 0);
+        $o = $this->FFIInstant->results_encode(FFI::addr($tv));
+        FFI::free($tv->err);
         return FFI::string($o);
     }
 

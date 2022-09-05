@@ -90,8 +90,10 @@ struct TupleType*  tuple_u32u32_decode(char* raw);
         return self.to_utf8(self.lib.bool_encode(boolValue))
 
     def results_encode(self, uint32):
-        return self.to_utf8(
-            self.lib.results_encode(uint32, self.str_to_ffi_string("None"), self.str_to_ffi_string("OK")))
+        s1 = self.ffi.new("struct ResultsType *")
+        s1.ok = 2
+        s1.err = ""
+        return self.to_utf8(self.lib.results_encode(s1))
 
     def results_decode(self, raw):
         raw = self.str_to_ffi_string(raw)
