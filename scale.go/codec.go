@@ -52,10 +52,10 @@ type ResultsType struct {
 	Err string
 }
 
-func ResultEncode(data uint) string {
+func ResultEncode(data uint, err string) string {
 	var s C.struct_ResultsType
 	s.ok = C.uint(data)
-	s.err = C.CString("")
+	s.err = C.CString(err)
 	o := C.results_encode(&s)
 	return C.GoString(o)
 }

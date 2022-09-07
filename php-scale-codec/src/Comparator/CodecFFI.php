@@ -57,11 +57,16 @@ class CodecFFI
     }
 
 
-    public function ResultEncode ($value): string
+    public function ResultEncode (int $value, string $err): string
     {
         $tv = $this->FFIInstant->new("struct ResultsType");
         $tv->ok = $value;
-        $tv->err =  $this->FFIInstant->new('char[1]', 0);
+        $size = strlen($err);
+        $cStr = FFI::new("char[$size == 0 ? 1 : $size]",0 );
+        if ($size > 0) {
+            FFI::memcpy($cStr, $err, $size);
+        }
+        $tv->err = $cStr;
         $o = $this->FFIInstant->results_encode(FFI::addr($tv));
         FFI::free($tv->err);
         return FFI::string($o);

@@ -3,8 +3,8 @@ let path = require('path');
 const ref = require('ref-napi')
 const RefStruct = require('ref-struct-di')(ref);
 const ArrayType = require('ref-array-di')(ref);
-import {Bool, TypeRegistry, u32, U8, u8} from '@polkadot/types';
-import {Compact, U32, bool, Option, Result, Text, Enum, Struct, Tuple, Vec, VecFixed} from '@polkadot/types-codec';
+import {Bool, TypeRegistry, u32, U8} from '@polkadot/types';
+import {bool, Compact, Enum, Option, Result, Struct, Text, Tuple, U32, Vec, VecFixed} from '@polkadot/types-codec';
 
 let rootPath = process.env.FFI_PATH || path.resolve(path.dirname(path.dirname(__dirname)))
 
@@ -103,17 +103,21 @@ describe('base ffi codec', (): void => {
         const st = new resultsType;
         st.ok = 2;
         st.err = "";
-        expect(
-            tohex(new ResultU32Err(registry, {Ok: 2}).toU8a())
-        ).toEqual(libm.results_encode(st.ref()));
+        expect(tohex(new ResultU32Err(registry, {Ok: 2}).toU8a())).toEqual(libm.results_encode(st.ref()));
+
+        const stWithErr = new resultsType;
+        stWithErr.ok = 0;
+        stWithErr.err = "err";
+        expect(tohex(new ResultU32Err(registry, {Err: "err"}).toU8a())).toEqual(libm.results_encode(stWithErr.ref()));
     });
 
     it('decode result<u32,string>', (): void => {
         let result = libm.results_decode("0002000000").deref().toJSON()
         delete result["err"]
-        expect(
-            (new ResultU32Err(registry, toU8a("0002000000"))).toJSON()
-        ).toEqual(result);
+        expect((new ResultU32Err(registry, toU8a("0002000000"))).toJSON()).toEqual(result);
+        result = libm.results_decode("010c657272").deref().toJSON()
+        delete result["ok"]
+        expect((new ResultU32Err(registry, toU8a("010c657272"))).toJSON()).toEqual(result);
     });
     const PStruct = Struct.with({data: U32, other: U8})
     it('encode struct', (): void => {
@@ -175,7 +179,7 @@ describe('base ffi codec', (): void => {
         ).toEqual(libm.string_decode("1848616d6c6574"));
     });
 
-      const VecFixedU32 = VecFixed.with(U32,6);
+    const VecFixedU32 = VecFixed.with(U32, 6);
     it('encode [u32;6]', (): void => {
         const IntArray = ArrayType('uint32');
         // @ts-ignore

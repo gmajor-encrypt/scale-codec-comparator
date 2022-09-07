@@ -20,8 +20,11 @@ func TestFFICodec(t *testing.T) {
 	assert.Equal(t, true, BoolDecode("01"))
 	assert.Equal(t, "01", BoolEncode(true))
 
-	assert.Equal(t, "0002000000", ResultEncode(2))
+	assert.Equal(t, "0002000000", ResultEncode(2, ""))
 	assert.Equal(t, &ResultsType{Ok: uint(2), Err: ""}, ResultDecode("0002000000"))
+
+	assert.Equal(t, "010c657272", ResultEncode(0, "err"))
+	assert.Equal(t, &ResultsType{Ok: uint(0), Err: "err"}, ResultDecode("010c657272"))
 
 	assert.Equal(t, "0a00000001", StructEncode(&CodecStruct{Data: 10, Other: 1}))
 	assert.Equal(t, &CodecStruct{Data: 10, Other: 1}, StructDecode("0a00000001"))
@@ -66,10 +69,15 @@ func TestBool(t *testing.T) {
 func TestResultsU32Err(t *testing.T) {
 	m := types.ScaleDecoder{}
 	m.Init(scaleBytes.ScaleBytes{Data: utiles.HexToBytes("0002000000")}, nil)
-	goResultValue := m.ProcessAndUpdateData("Result<u32,string>").(map[string]interface{})
 	ffiValue := ResultDecode("0002000000")
-	assert.EqualValues(t, ffiValue.Ok, goResultValue["Ok"].(uint32))
-	assert.Equal(t, ResultEncode(2), types.Encode("Result<u32,string>", map[string]interface{}{"Ok": 2}))
+	// test with ok
+	assert.EqualValues(t, ffiValue.Ok, m.ProcessAndUpdateData("Result<u32,string>").(map[string]interface{})["Ok"].(uint32))
+	assert.Equal(t, ResultEncode(2, ""), types.Encode("Result<u32,string>", map[string]interface{}{"Ok": 2}))
+	// test with err
+	m.Init(scaleBytes.ScaleBytes{Data: utiles.HexToBytes("010c657272")}, nil)
+	ffiValue = ResultDecode("010c657272")
+	assert.EqualValues(t, ffiValue.Err, m.ProcessAndUpdateData("Result<u32,string>").(map[string]interface{})["Error"].(string))
+	assert.Equal(t, ResultEncode(0, "err"), types.Encode("Result<u32,string>", map[string]interface{}{"Error": "err"}))
 }
 
 func TestStruct(t *testing.T) {

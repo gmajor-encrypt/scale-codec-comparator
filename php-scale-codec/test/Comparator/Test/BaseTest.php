@@ -43,8 +43,10 @@ final class BaseTest extends TestCase
         $this->assertEquals(true, $this->FFICodec->BoolDecode("01"));
         $this->assertEquals("01", $this->FFICodec->BoolEncode(true));
 
-        $this->assertEquals("0002000000", $this->FFICodec->ResultEncode(2));
+        $this->assertEquals("0002000000", $this->FFICodec->ResultEncode(2,""));
+
         $this->assertEquals(["OK" => 2, "ERR" => ""], $this->FFICodec->ResultDecode("0002000000"));
+        $this->assertEquals(["OK" => 0, "ERR" => "err"], $this->FFICodec->ResultDecode("010c657272"));
 
 
         $this->assertEquals(["Data" => 10, "Other" => 1], $this->FFICodec->StructDecode("0a00000001"));
@@ -92,8 +94,9 @@ final class BaseTest extends TestCase
 
     public function testResultU32 ()
     {
-        $this->assertEquals($this->codec->createTypeByTypeString("result<u32,string>")->encode(["Ok" => 2]), $this->FFICodec->ResultEncode(2));
+        $this->assertEquals($this->codec->createTypeByTypeString("result<u32,string>")->encode(["Ok" => 2]), $this->FFICodec->ResultEncode(2,""));
         $this->assertEquals($this->codec->process("result<u32,string>", new ScaleBytes("0002000000"))['Ok'], $this->FFICodec->ResultDecode("0002000000")['OK']);
+        $this->assertEquals($this->codec->process("result<u32,string>", new ScaleBytes("010c657272"))['Err'], $this->FFICodec->ResultDecode("010c657272")['ERR']);
     }
 
     public function testString ()
