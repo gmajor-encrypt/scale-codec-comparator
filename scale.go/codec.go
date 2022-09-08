@@ -117,7 +117,7 @@ func StringDecode(raw string) string {
 	return C.GoString(o)
 }
 
-func FixU32Encode(input [6]uint32) string {
+func FixU32Encode(input []uint32) string {
 	o := C.fixU32_encode((*C.uint)(unsafe.Pointer(&input[0])), C.size_t(len(input)))
 	return C.GoString(o)
 }
