@@ -66,36 +66,34 @@ describe('base ffi codec', (): void => {
     const registry = new TypeRegistry();
     // Compact<U32>
     it('encodes compact<u32>', (): void => {
-        expect(
-            tohex(new (Compact.with(U32))(registry, 2).toU8a())
-        ).toEqual(libm.compact_u32_encode(2));
+        expect(tohex(new (Compact.with(U32))(registry, 2).toU8a())).toEqual(libm.compact_u32_encode(2));
+        expect(tohex(new (Compact.with(U32))(registry, 0).toU8a())).toEqual(libm.compact_u32_encode(0));
+        expect(tohex(new (Compact.with(U32))(registry, 65536).toU8a())).toEqual(libm.compact_u32_encode(65536));
     });
     it('decode compact<u32>', (): void => {
-        expect(
-            new (Compact.with(U32))(registry, new Uint8Array([8])).toNumber()
-        ).toEqual(libm.compact_u32_decode("08"));
+        expect(new (Compact.with(U32))(registry, toU8a("08")).toNumber()).toEqual(libm.compact_u32_decode("08"));
+        expect(new (Compact.with(U32))(registry, toU8a("00")).toNumber()).toEqual(libm.compact_u32_decode("00"));
+        expect(new (Compact.with(U32))(registry, toU8a("02000400")).toNumber()).toEqual(libm.compact_u32_decode("02000400"));
     });
 
 
     it('encodes option<bool>', (): void => {
-        expect(
-            tohex(new Option(registry, bool, null).toU8a())
-        ).toEqual(libm.option_bool_encode("NONE"));
+        expect(tohex(new Option(registry, bool, null).toU8a())).toEqual(libm.option_bool_encode("NONE"));
+        expect(tohex(new Option(registry, bool, true).toU8a())).toEqual(libm.option_bool_encode("true"));
+        expect(tohex(new Option(registry, bool, false).toU8a())).toEqual(libm.option_bool_encode("false"));
     });
     it('decode option<bool>', (): void => {
-        expect(
-            new Option(registry, bool, new Uint8Array([1, 1])).toHuman()
-        ).toEqual(libm.option_bool_decode("01") === 'true');
+        expect(new Option(registry, bool, new Uint8Array([1, 1])).toHuman()).toEqual(libm.option_bool_decode("01") === 'true');
+        expect(new Option(registry, bool, new Uint8Array([0, 0])).toHuman()).toEqual(libm.option_bool_decode("00") == "None" ? null : "true");
     });
+
     it('encodes bool', (): void => {
-        expect(
-            tohex(new Bool(registry, true).toU8a())
-        ).toEqual(libm.bool_encode(true));
+        expect(tohex(new Bool(registry, true).toU8a())).toEqual(libm.bool_encode(true));
+        expect(tohex(new Bool(registry, false).toU8a())).toEqual(libm.bool_encode(false));
     });
     it('decode bool', (): void => {
-        expect(
-            new Bool(registry, new Uint8Array([1])).toHuman()
-        ).toEqual(libm.bool_decode("01"));
+        expect(new Bool(registry, new Uint8Array([1])).toHuman()).toEqual(libm.bool_decode("01"));
+        expect(new Bool(registry, new Uint8Array([0])).toHuman()).toEqual(libm.bool_decode("00"));
     });
 
     const ResultU32Err = Result.with({Err: Text, Ok: U32});
@@ -119,37 +117,42 @@ describe('base ffi codec', (): void => {
         delete result["ok"]
         expect((new ResultU32Err(registry, toU8a("010c657272"))).toJSON()).toEqual(result);
     });
+
+
     const PStruct = Struct.with({data: U32, other: U8})
     it('encode struct', (): void => {
         const st = new CodecStruct;
         st.data = 10;
         st.other = 1;
-        expect(
-            tohex(new PStruct(registry, {data: 10, other: 1}).toU8a())
-        ).toEqual(libm.data_struct_encode(st.ref()));
+        expect(tohex(new PStruct(registry, {data: 10, other: 1}).toU8a())).toEqual(libm.data_struct_encode(st.ref()));
+        st.data = 100;
+        st.other = 15;
+        expect(tohex(new PStruct(registry, {data: 100, other: 15}).toU8a())).toEqual(libm.data_struct_encode(st.ref()));
     });
     it('decode struct', (): void => {
-        let value = libm.data_struct_decode("0a00000001").deref().toJSON()
-        expect(
-            (new PStruct(registry, toU8a("0a00000001"))).toJSON()
-        ).toEqual(value);
+        expect((new PStruct(registry, toU8a("0a00000001"))).toJSON()).toEqual(libm.data_struct_decode("0a00000001").deref().toJSON());
+        expect((new PStruct(registry, toU8a("0a00000002"))).toJSON()).toEqual(libm.data_struct_decode("0a00000002").deref().toJSON());
     });
 
     const PEnum = Enum.with({a: U32, b: U32, c: U32});
     it('encode enum', (): void => {
         const st = new EnumStruct;
         st.a = 1;
-        expect(
-            tohex(new PEnum(registry, {a: 1}).toU8a())
-        ).toEqual(libm.data_enum_encode(st.ref()));
+        expect(tohex(new PEnum(registry, {a: 1}).toU8a())).toEqual(libm.data_enum_encode(st.ref()));
+        const st2 = new EnumStruct;
+        st2.b = 32;
+        expect(tohex(new PEnum(registry, {b: 32}).toU8a())).toEqual(libm.data_enum_encode(st2.ref()));
+
     });
     it('decode enum', (): void => {
         let value = libm.data_enum_decode("0001000000").deref().toJSON()
         delete value["b"]
         delete value["c"]
-        expect(
-            (new PEnum(registry, toU8a("0001000000"))).toJSON()
-        ).toEqual(value);
+        expect((new PEnum(registry, toU8a("0001000000"))).toJSON()).toEqual(value);
+        value = libm.data_enum_decode("0101000000").deref().toJSON()
+        delete value["a"]
+        delete value["c"]
+        expect((new PEnum(registry, toU8a("0101000000"))).toJSON()).toEqual(value);
     });
 
     const PTuple = Tuple.with([U32, U32]);
@@ -157,36 +160,37 @@ describe('base ffi codec', (): void => {
         const st = new TupleType;
         st.a = 10;
         st.b = 1;
-        expect(
-            tohex(new PTuple(registry, [10, 1]).toU8a())
-        ).toEqual(libm.tuple_u32u32_encode(st.ref()));
+        expect(tohex(new PTuple(registry, [10, 1]).toU8a())).toEqual(libm.tuple_u32u32_encode(st.ref()));
+        st.b = 86400
+        st.a = 86400
+        expect(tohex(new PTuple(registry, [86400, 86400]).toU8a())).toEqual(libm.tuple_u32u32_encode(st.ref()));
     });
     it('decode (u32,u32)', (): void => {
         let value = libm.tuple_u32u32_decode("0a00000001000000").deref().toJSON()
-        expect(
-            (new PTuple(registry, toU8a("0a00000001000000"))).toJSON()
-        ).toEqual([value["a"], value["b"]]);
+        expect((new PTuple(registry, toU8a("0a00000001000000"))).toJSON()).toEqual([value["a"], value["b"]]);
+        value = libm.tuple_u32u32_decode("0a00000005000000").deref().toJSON()
+        expect((new PTuple(registry, toU8a("0a00000005000000"))).toJSON()).toEqual([value["a"], value["b"]]);
     });
 
     it('encodes string', (): void => {
-        expect(
-            tohex(new Text(registry, "Hamlet").toU8a())
-        ).toEqual(libm.string_encode("Hamlet"));
+        expect(tohex(new Text(registry, "Hamlet").toU8a())).toEqual(libm.string_encode("Hamlet"));
+        expect(tohex(new Text(registry, "Война и мир").toU8a())).toEqual(libm.string_encode("Война и мир"));
+        expect(tohex(new Text(registry, "三国演义").toU8a())).toEqual(libm.string_encode("三国演义"));
     });
     it('decode string', (): void => {
-        expect(
-            (new Text(registry, toU8a("1848616d6c6574"))).toJSON()
-        ).toEqual(libm.string_decode("1848616d6c6574"));
+        expect((new Text(registry, toU8a("1848616d6c6574"))).toJSON()).toEqual(libm.string_decode("1848616d6c6574"));
+        expect((new Text(registry, toU8a("30e4b889e59bbde6bc94e4b989"))).toJSON()).toEqual(libm.string_decode("30e4b889e59bbde6bc94e4b989"));
+        expect((new Text(registry, toU8a("50d092d0bed0b9d0bdd0b020d0b820d0bcd0b8d180"))).toJSON()).toEqual(libm.string_decode("50d092d0bed0b9d0bdd0b020d0b820d0bcd0b8d180"));
     });
 
     const VecFixedU32 = VecFixed.with(U32, 6);
     it('encode [u32;6]', (): void => {
         const IntArray = ArrayType('uint32');
         // @ts-ignore
-        const array = new IntArray([1, 2, 3, 4, 5, 6]);
-        expect(
-            tohex(new VecFixedU32(registry, [1, 2, 3, 4, 5, 6]).toU8a())
-        ).toEqual(libm.fixU32_encode(array.buffer, 6));
+        let array = new IntArray([1, 2, 3, 4, 5, 6]);
+        expect(tohex(new VecFixedU32(registry, [1, 2, 3, 4, 5, 6]).toU8a())).toEqual(libm.fixU32_encode(array.buffer, 6));
+        array = new IntArray([0, 0, 0, 0, 0, 0]);
+        expect(tohex(new VecFixedU32(registry, [0, 0, 0, 0, 0, 0]).toU8a())).toEqual(libm.fixU32_encode(array.buffer, 6));
     });
 
     it('decode [u32;6]', (): void => {
@@ -209,10 +213,10 @@ describe('base ffi codec', (): void => {
     const VecU32 = Vec.with(u32);
     it('encode vec<u32>', (): void => {
         const IntArray = ArrayType('uint32');
-        const array = new IntArray([1, 2, 3, 4, 5, 6]);
-        expect(
-            tohex(new VecU32(registry, [1, 2, 3, 4, 5, 6]).toU8a())
-        ).toEqual(libm.vec_u32_encode(array.buffer, 6));
+        let array = new IntArray([1, 2, 3, 4, 5, 6]);
+        expect(tohex(new VecU32(registry, [1, 2, 3, 4, 5, 6]).toU8a())).toEqual(libm.vec_u32_encode(array.buffer, 6));
+        array = new IntArray([0, 0, 0, 0, 0, 0]);
+        expect(tohex(new VecU32(registry, [0, 0, 0, 0, 0, 0]).toU8a())).toEqual(libm.vec_u32_encode(array.buffer, 6));
     });
 
     it('decode <u32>', (): void => {
