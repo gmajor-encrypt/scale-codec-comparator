@@ -145,49 +145,67 @@ RSpec.describe Scale::Types do
   it "FFI codec output compare with scala.rb" do
     # compact<u32>
     expect(Rust.compact_u32_encode(2)).to eq(Scale::Types::Compact.new(2).encode)
+    expect(Rust.compact_u32_encode(0)).to eq(Scale::Types::Compact.new(0).encode)
+    expect(Rust.compact_u32_encode(65536)).to eq(Scale::Types::Compact.new(65536).encode)
     expect(Rust.compact_u32_decode("08")).to eq(Scale::Types::Compact.decode(Scale::Bytes.new("0x08")).value)
+    expect(Rust.compact_u32_decode("00")).to eq(Scale::Types::Compact.decode(Scale::Bytes.new("0x00")).value)
+    expect(Rust.compact_u32_decode("02000400")).to eq(Scale::Types::Compact.decode(Scale::Bytes.new("0x02000400")).value)
 
     # option<bool>
     expect(Rust.option_bool_encode("None")).to eq(Scale::Types::OptionBool.new(nil).encode)
+    expect(Rust.option_bool_encode("true")).to eq(Scale::Types::OptionBool.new(true).encode)
+    expect(Rust.option_bool_encode("false")).to eq(Scale::Types::OptionBool.new(false ).encode)
     expect(Rust.option_bool_decode("01")).to eq(Scale::Types::OptionBool.decode(Scale::Bytes.new("0x01")).value.to_s)
+    expect(Rust.option_bool_decode("00")).to eq(Scale::Types::OptionBool.decode(Scale::Bytes.new("0x00")).value.to_s==""?"None":"true")
+    expect(Rust.option_bool_decode("02")).to eq(Scale::Types::OptionBool.decode(Scale::Bytes.new("0x02")).value.to_s)
     #
     # bool
     expect(Rust.bool_decode("01")).to eq(Scale::Types::Bool.decode(Scale::Bytes.new("0x01")).value)
+    expect(Rust.bool_decode("00")).to eq(Scale::Types::Bool.decode(Scale::Bytes.new("0x00")).value)
     expect(Rust.bool_encode(true)).to eq(Scale::Types::Bool.new(true).encode)
+    expect(Rust.bool_encode(false)).to eq(Scale::Types::Bool.new(false ).encode)
     #
 
-    # # struct
+    # struct
     #
     struct_type = { "type" => "struct", "type_mapping" => [["Data", "u32"], ["Other", "U8"]] }
     codec_struct = Scale::Types.get(struct_type)
-    struct_output = Rust.data_struct_decode("0a00000001")
 
+    struct_output = Rust.data_struct_decode("0a00000001")
     expect({"Data"=>struct_output[:data],"Other"=>struct_output[:other]}).to eq(codec_struct.decode(Scale::Bytes.new("0x0a00000001")).value.map{|k,v| [k, v.value]}.to_h)
+    struct_output = Rust.data_struct_decode("0a00000002")
+    expect({"Data"=>struct_output[:data],"Other"=>struct_output[:other]}).to eq(codec_struct.decode(Scale::Bytes.new("0x0a00000002")).value.map{|k,v| [k, v.value]}.to_h)
+    struct_output = Rust.data_struct_decode("0000000001")
+    expect({"Data"=>struct_output[:data],"Other"=>struct_output[:other]}).to eq(codec_struct.decode(Scale::Bytes.new("0x0000000001")).value.map{|k,v| [k, v.value]}.to_h)
+
+
     cs = CodecStruct.new
     cs[:data] = 10
     cs[:other] = 1
     expect(Rust.data_struct_encode(cs)).to eq(codec_struct.new({"Data"=>Scale::Types::U32.new(10),"Other"=>Scale::Types::U8.new(1)}).encode)
-
+    cs[:data] = 0
+    cs[:other] = 0
+    expect(Rust.data_struct_encode(cs)).to eq(codec_struct.new({"Data"=>Scale::Types::U32.new(0),"Other"=>Scale::Types::U8.new(0)}).encode)
 
     # tuple
     tuple_output = Rust.tuple_u32u32_decode("0a00000001000000")
     expect([tuple_output[:a],tuple_output[:b]]).to eq(Scale::Types.get("(U32, U32)").decode(Scale::Bytes.new("0x0a00000001000000")).value.map{|v| v.value})
+    tuple_output = Rust.tuple_u32u32_decode("0a00000005000000")
+    expect([tuple_output[:a],tuple_output[:b]]).to eq(Scale::Types.get("(U32, U32)").decode(Scale::Bytes.new("0x0a00000005000000")).value.map{|v| v.value})
     cs = TupleType.new
     cs[:a] = 10
     cs[:b] = 1
     expect(Rust.tuple_u32u32_encode(cs)).to eq(Scale::Types.get("(U32, U32)").new([Scale::Types::U32.new(10),Scale::Types::U32.new(1)]).encode)
+    cs[:a] = 100000
+    cs[:b] = 100000
+    expect(Rust.tuple_u32u32_encode(cs)).to eq(Scale::Types.get("(U32, U32)").new([Scale::Types::U32.new(100000),Scale::Types::U32.new(100000)]).encode)
 
     # vec<u32>
-    vec_u32 = [1, 2, 3, 4, 5, 6]
-    size = vec_u32.size
-    # ptr_vec = FFI::MemoryPointer.new :uint32, size
-    # ptr_vec.put_array_of_uint32 0, vec_u32
-    # Scale::Types.get("Vec<U32>").new(vec_u32).encode
-    # expect(Rust.vec_u32_encode(ptr_vec,size)).to eq("")
-    # size = vec_u32.size
-    vec_u32_output =  Rust.vec_u32_decode("18010000000200000003000000040000000500000006000000")
-    result_array = vec_u32_output.read_array_of_uint32(size)
+    result_array = Rust.vec_u32_decode("18010000000200000003000000040000000500000006000000").read_array_of_uint32([1, 2, 3, 4, 5, 6].size)
     expect(result_array).to eq( Scale::Types.get("Vec<U32>").decode(Scale::Bytes.new("0x18010000000200000003000000040000000500000006000000")).value.map{|x|x.value})
+    result_array = Rust.vec_u32_decode("18010000000400000005000000070000000500000008000000").read_array_of_uint32([1, 2, 3, 4, 5, 6].size)
+    expect(result_array).to eq( Scale::Types.get("Vec<U32>").decode(Scale::Bytes.new("0x18010000000400000005000000070000000500000008000000")).value.map{|x|x.value})
+
   end
   #
   it "FFI codec output compare with scala.rb, result types should support" do
