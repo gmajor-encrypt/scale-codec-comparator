@@ -319,6 +319,13 @@ fn codec()
     assert_eq!(hexify(&encoded), "0c 01 01 01 ff 00");
     assert_eq!(<Vec<Option<i8>>>::decode(&mut &encoded[..]).unwrap(), value);
 
+
+    let empty_vec: Vec<u8> = vec![];
+    let opt_vec = Some(empty_vec);
+    assert_eq!(hexify(&opt_vec.encode()),"01 00");
+    // assert_eq!(, "0c");
+
+
     // vec<option<bool>
     let value = vec![OptionBool(Some(true)), OptionBool(Some(false)), OptionBool(None)];
     let encoded = value.encode();
