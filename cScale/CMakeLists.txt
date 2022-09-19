@@ -6,7 +6,6 @@ add_executable(${PROJECT_NAME} mainapp.c)
 target_link_libraries(${PROJECT_NAME} cScale)
 
 
-#target_link_libraries(${PROJECT_NAME} lib/libscale_ffi.dylib)
 file(GLOB LIBRARIES "lib/*.dylib")
 message("LIBRARIES = ${LIBRARIES}")
 target_link_libraries(${PROJECT_NAME} ${LIBRARIES})
