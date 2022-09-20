@@ -40,6 +40,13 @@ make
 The FFI are definitions here https://github.com/gmajor-encrypt/scale-codec-comparator/blob/main/src/scale_ffi.h
 
 
+## How to Compare
+
+We use [the reference implementation](https://github.com/paritytech/parity-scale-codec) as the standard result to
+compare with the results of other implementations of the SCALE Codec test.
+If the test fails, the implementation is inconsistent with parity-scale.
+You can simply get the test results from the top badges.
+
 ### scale.go
 ```bash
 cd scale.go && go test -v ./...
