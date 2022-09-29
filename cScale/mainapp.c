@@ -7,7 +7,6 @@
 
 int main()
 {
-//    printf("%s", compact_u32_encode(1));
     assert(strcasecmp(compact_u32_encode(1), "04") == 0);
     assert(compact_u32_decode("04")== 1);
 
@@ -31,4 +30,10 @@ int main()
     assert(strcasecmp(fixU32_encode(values,6), "010000000200000003000000040000000500000006000000") == 0);
 
     assert(strcasecmp(vec_u32_encode(values,6), "18010000000200000003000000040000000500000006000000") == 0);
+
+    unsigned int *fixU32Ptr = fixU32_decode("010000000200000003000000040000000500000006000000");
+    for ( int i = 0; i < 6; i++ ) {
+        assert(values[i]==*(fixU32Ptr + i));
+    }
+
 }
