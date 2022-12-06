@@ -1,0 +1,3 @@
+[submodule "cScale"]
+path = cScale
+url = https://github.com/MatthewDarnell/cScale.git

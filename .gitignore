@@ -5,3 +5,8 @@ php-scale-codec/.phpunit.result.cache
 php-scale-codec/vendor
 py-scale-codec/env
 polkadot-js/node_modules
+cScale/CMakeFiles
+cScale/cmake_install.cmake
+cScale/CMakeCache.txt
+cScale/Makefile
+cScale/MyProject

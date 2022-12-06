@@ -1,0 +1,6 @@
+.ninja_deps
+.ninja_log
+build.ninja
+.cmake
+Testing
+cScale/cmake_install.cmake
