@@ -18,7 +18,11 @@ import qualified Data.Vector.Unboxed   as V (fromList)
 import           Data.Word             (Word16, Word32, Word64, Word8)
 import qualified GHC.Generics          as GHC (Generic)
 import           Codec.Scale
+import           Test.Hspec
+import           Test.Hspec.QuickCheck
 
+data Unit = Unit
+    deriving (Eq, Show, GHC.Generic, Generic, Encode, Decode)
 
 data EnumType = A
     | B Word32 Word64
@@ -29,4 +33,10 @@ data EnumType = A
     deriving (Eq, Show, GHC.Generic, Generic, Encode, Decode)
 
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = hspec $ do
+    describe "Regular types" $ do
+        prop "Bool" $ \(v :: Bool) -> decode (encode v :: ByteString) == Right v
+
+--    describe "Test FFI CALL"  $ do
+
+

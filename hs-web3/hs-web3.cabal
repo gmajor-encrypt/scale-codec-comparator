@@ -13,7 +13,6 @@ author:         Author name here
 maintainer:     example@example.com
 copyright:      2022 Author name here
 license:        BSD3
-license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
     README.md
@@ -71,6 +70,10 @@ test-suite hs-web3-test
     , bitvec >1.0 && <2.0
     , bytestring >0.10 && <0.11
     , hs-web3
+    , hspec >=2.4.4 && <2.9
+    , hspec-contrib >=0.4.0 && <0.6
+    , hspec-discover >=2.4.4 && <2.9
+    , hspec-expectations >=0.8.2 && <0.9
     , memory >0.14 && <0.17
     , scale
     , text >1.2 && <1.3
