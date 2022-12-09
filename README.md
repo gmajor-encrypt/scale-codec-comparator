@@ -23,8 +23,8 @@ The tests of the following scale libraries have been completed
 - [x] py-scale-codec https://github.com/polkascan/py-scale-codec
 - [ ] cScale https://github.com/MatthewDarnell/cScale
 - [ ] as-scale-codec https://github.com/LimeChain/as-scale-codec
-- [ ] hs-web3 https://github.com/airalab/hs-web3/
-- [ ] polkaj https://github.com/emeraldpay/polkaj
+- [ ] go-substrate-rpc-client https://github.com/centrifuge/go-substrate-rpc-client/tree/master/scale
+- [ ] scale-codec-js-library https://github.com/soramitsu/scale-codec-js-library
 - [ ] scale-codec-cpp https://github.com/soramitsu/scale-codec-cpp
 - [ ] scale-ts https://github.com/unstoppablejs/unstoppablejs/tree/main/packages/scale-ts#scale-ts
 

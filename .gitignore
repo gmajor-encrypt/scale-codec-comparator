@@ -10,3 +10,4 @@ cScale/cmake_install.cmake
 cScale/CMakeCache.txt
 cScale/Makefile
 cScale/MyProject
+scale-codec-js-library/node_modules
