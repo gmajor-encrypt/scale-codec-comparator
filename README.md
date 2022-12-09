@@ -24,9 +24,9 @@ The tests of the following scale libraries have been completed
 - [ ] cScale https://github.com/MatthewDarnell/cScale
 - [ ] as-scale-codec https://github.com/LimeChain/as-scale-codec
 - [ ] go-substrate-rpc-client https://github.com/centrifuge/go-substrate-rpc-client/tree/master/scale
-- [ ] scale-codec-js-library https://github.com/soramitsu/scale-codec-js-library
+- [x] scale-codec-js-library https://github.com/soramitsu/scale-codec-js-library
 - [ ] scale-codec-cpp https://github.com/soramitsu/scale-codec-cpp
-- [ ] scale-ts https://github.com/unstoppablejs/unstoppablejs/tree/main/packages/scale-ts#scale-ts
+- [x] scale-ts https://github.com/unstoppablejs/unstoppablejs/tree/main/packages/scale-ts#scale-ts
 
 
 ## Build
