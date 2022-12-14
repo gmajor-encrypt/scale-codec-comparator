@@ -1,0 +1,4 @@
+node_modules
+build
+tests/index.spec.map
+tests/index.spec.wat

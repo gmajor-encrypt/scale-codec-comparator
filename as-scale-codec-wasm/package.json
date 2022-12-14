@@ -1,0 +1,24 @@
+{
+  "name": "as-scale-codec",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "asbuild:debug": "asc assembly/index.ts --target debug",
+    "asbuild:release": "asc assembly/index.ts --target release --exportRuntime",
+    "asbuild": "npm run asbuild:debug && npm run asbuild:release",
+    "test:js": "npm run asbuild && node tests",
+    "test": "asp",
+    "build": "asc "
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@as-pect/assembly": "^4.0.0",
+    "@as-pect/cli": "^4.0.0",
+    "@as-pect/core": "^4.0.0",
+    "@assemblyscript/loader": "^0.16.1",
+    "as-scale-codec": "^0.2.3",
+    "assemblyscript": "^0.19.1",
+    "wasm-ffi": "^0.3.0"
+  }
+}
