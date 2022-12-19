@@ -1,0 +1,33 @@
+name: go-substrate-rpc-client-test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'go-substrate-rpc-client/**'
+
+jobs:
+  test:
+    name: Build and TEST
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+
+      - name: build-ffi
+        run: make
+
+      - uses: actions/setup-go@v1
+        with:
+          go-version: 1.17.10
+
+      - name: Test
+        run: |
+          cd go-substrate-rpc-client
+          go test -v ./...
