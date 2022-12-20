@@ -3,10 +3,13 @@
 #include "../src/scale_ffi.h"
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 
-int main()
-{
+// Test For FFI Call
+void test_ffi_call(){
+
     assert(strcasecmp(compact_u32_encode(1), "04") == 0);
     assert(compact_u32_decode("04")== 1);
 
@@ -35,5 +38,43 @@ int main()
     for ( int i = 0; i < 6; i++ ) {
         assert(values[i]==*(fixU32Ptr + i));
     }
+}
 
+char *add_hex(char* str)
+{
+    char *ext = "0x";
+    char *with_hex;
+    asprintf(&with_hex, "%s%s",ext,str);
+    return with_hex;
+}
+
+void test_scale_boolean(){
+    printf("\tBoolean to Scale:\n");
+    uint8_t out = 0;
+    char *hex = NULL;
+    scale_boolean boolean, boolean_decoded;
+    encode_boolean(&boolean, true);
+    serialize_boolean(&out, &boolean);
+    hex = decode_boolean_to_hex(&boolean);
+    assert(strcasecmp(hex,add_hex(bool_encode(true)) ) == 0);
+    assert(encode_boolean_from_hex(&boolean_decoded, hex) == 0);
+    assert(decode_boolean(&boolean_decoded) == bool_decode("01"));
+    free(hex);
+
+
+    out = 1;
+    encode_boolean(&boolean, false);
+    serialize_boolean(&out, &boolean);
+    hex = decode_boolean_to_hex(&boolean);
+    assert(strcasecmp(hex,add_hex(bool_encode(false)) ) == 0);
+    assert(encode_boolean_from_hex(&boolean_decoded, hex) == 0);
+    assert(decode_boolean(&boolean_decoded) == bool_decode("00"));
+    free(hex);
+}
+
+int main()
+{
+    test_ffi_call();
+    test_scale_boolean();
+    printf("test success, no errors\n");
 }
