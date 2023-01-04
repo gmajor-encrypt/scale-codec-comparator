@@ -161,6 +161,114 @@ void test_string(){
     }
 }
 
+struct Structure {
+    uint32_t data;
+    int8_t b;
+    scale_structure scale_encoder;  //helper, contains our serialization functions
+};
+
+void struct_Structure_serialize(uint8_t* serialized, size_t *bytes, void *structure) {
+    struct Structure *value = (struct Structure*)structure; //Cast void* as our Structure
+
+    scale_fixed_int uint_a, int8_b;
+
+    encode_uint32_to_fixed_int_scale(&uint_a, value->data);
+    uint64_t len_data = 0;
+    serialize_fixed_int(serialized, &len_data, &uint_a);
+
+    *bytes = len_data;
+    encode_int_to_fixed_int_scale(&int8_b, value->b);
+    uint64_t len = 0;
+    serialize_fixed_int(&serialized[*bytes], &len, &int8_b);
+    *bytes += len;
+}
+
+void struct_Structure_deserialize(void *structure_out, uint8_t *bytes, size_t len) {
+    struct Structure *value = (struct Structure*)structure_out;
+    scale_fixed_int *uint_a = &value->data;
+    scale_fixed_int *int8_b = &value->b;
+    deserialize_fixed_int(&value->data, bytes, 4, false);
+    deserialize_fixed_int(&value->b, &bytes[4], 1, false);
+}
+
+
+void test_struct()
+{
+    struct Structure my_struct;
+    my_struct.data = 10;
+    my_struct.b = 1;
+    my_struct.scale_encoder.serialize = &struct_Structure_serialize;
+    my_struct.scale_encoder.deserialize = &struct_Structure_deserialize;
+
+    uint8_t serialized[32] = { 0 };
+    size_t len = 0;
+    my_struct.scale_encoder.serialize(serialized, &len, &my_struct);
+
+    struct CodecStruct p_struct;
+    p_struct.data= 10;
+    p_struct.other= 1;
+    assert(strcasecmp(data_struct_encode(&p_struct), to_hash(serialized,len)) == 0);
+
+    struct Structure deserialized;
+    my_struct.scale_encoder.deserialize(&deserialized, serialized, len);
+
+    struct CodecStruct structDecodeRaw = *data_struct_decode(to_hash(serialized,len));
+    assert(structDecodeRaw.data == deserialized.data);
+    assert(structDecodeRaw.other == deserialized.b);
+}
+
+void test_enum()
+{
+
+}
+
+struct TupleStructure {
+    uint32_t a;
+    uint32_t b;
+    scale_structure scale_encoder;  //helper, contains our serialization functions
+};
+
+void test_tuple()
+{
+    uint8_t bytes[32] = { 0 };
+    size_t len = 0;
+
+    len = 0;
+    scale_fixed_int fixed = { 0 };
+    encode_int_to_fixed_int_scale(&fixed, (uint32_t)10);
+
+    scale_fixed_int fixed2 = { 0 };
+    encode_int_to_fixed_int_scale(&fixed2, (uint32_t)1);
+
+    serialize_as_tuple(bytes, &len, FIXED_INT, (void*)&fixed, FIXED_INT, (void*)&fixed2);
+
+    struct TupleType p_tuple;
+    p_tuple.a= 10;
+    p_tuple.b= 1;
+    assert(strcasecmp(tuple_u32u32_encode(&p_tuple), to_hash(bytes,len)) == 0);
+
+    scale_fixed_int a,b;
+    read_fixed_int_from_data(&a, 4, true, (const uint8_t*)bytes);
+    read_fixed_int_from_data(&b, 4, true, &bytes[4]);
+
+    uint32_t output_a = 0;
+    uint32_t output_b = 0;
+    decode_scale_fixed_int((void*)&output_a, &a);
+    decode_scale_fixed_int((void*)&output_b, &b);
+
+    struct TupleType tupleDecodeRaw = *tuple_u32u32_decode(to_hash(bytes,len));
+
+    assert(tupleDecodeRaw.a == output_a);
+    assert(tupleDecodeRaw.b== output_b);
+//    assert(tupleDecodeRaw.b == b);
+
+}
+
+void test_array()
+{
+
+}
+
 
 int main()
 {
@@ -170,5 +278,7 @@ int main()
     test_scale_boolean();
     test_results_u32_str();
     test_string();
+    test_struct();
+    test_tuple();
     printf("test success, no errors\n");
 }
