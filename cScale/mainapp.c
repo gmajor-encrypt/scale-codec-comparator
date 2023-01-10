@@ -219,14 +219,39 @@ void test_struct()
 
 void test_enum()
 {
+    scale_enum_type CustomEnum;
+
+    const char *strCustomEnum[][3] = {
+            {"a", "b", "c"},
+            {"uint32_t", "uint32_t", "uint32_t"}
+    };
+    encode_scale_enum_type(&CustomEnum, 3, (char**)strCustomEnum[0], (char**)strCustomEnum[1]);
+
+    uint8_t enum_bytes[32] = { 0 };
+
+    uint8_t bytes[32] = { 0 };
+    uint64_t len = 0;
+
+    char *type = "a";
+    uint32_t value = 10;
+    scale_fixed_int v = {0};
+    encode_int_to_fixed_int_scale(&v, value);
+    serialize_fixed_int(bytes, &len, &v);
+
+    encode_enumeration(enum_bytes, &CustomEnum, type, bytes, (size_t*)&len);
+    char *hex = cscale_byte_array_to_hex(enum_bytes, len + 1);
+
+    struct EnumStruct p_enum;
+    p_enum.a= 10;
+    assert(strcasecmp(data_enum_encode(&p_enum), hex) == 0);
+    uint16_t offset = 0;
+    decode_enumeration(bytes, &offset, &CustomEnum, enum_bytes, (size_t*)&len);
+    uint32_t output = 0;
+    deserialize_fixed_int((void*)&output, bytes, 4, false);
+    assert(output==data_enum_decode(hex)->a);
+    free(hex);
 
 }
-
-struct TupleStructure {
-    uint32_t a;
-    uint32_t b;
-    scale_structure scale_encoder;  //helper, contains our serialization functions
-};
 
 void test_tuple()
 {
@@ -260,13 +285,52 @@ void test_tuple()
 
     assert(tupleDecodeRaw.a == output_a);
     assert(tupleDecodeRaw.b== output_b);
-//    assert(tupleDecodeRaw.b == b);
 
 }
 
 void test_array()
 {
+    scale_vector vector = SCALE_VECTOR_INIT;
+    uint32_t values[6] = { 1, 2, 3, 4, 5, 6 };
+    int i;
+    uint8_t serialized[64] = { 0 };
+    uint64_t serialized_len = 0;
+    for(i = 0; i < 6; i++) {
+        scale_fixed_int fixed = { 0 };
+        encode_int_to_fixed_int_scale(&fixed, values[i]);
+        memset(serialized, 0, 64);
+        serialized_len = 0;
+        serialize_fixed_int(serialized, &serialized_len, &fixed);
+        push_vector(&vector, serialized, serialized_len);
+    }
+    uint8_t bytes[256] = { 0 };
+    size_t data_len = 0;
+    serialize_vector(bytes, &data_len, &vector);
 
+    char *encode_hash = to_hash(bytes,data_len);
+    assert(strcasecmp(vec_u32_encode(values,6), encode_hash) == 0);
+
+    cleanup_vector(&vector);
+
+    scale_vector decoded = SCALE_VECTOR_INIT;
+    size_t data_len_read_back = read_vector_from_data(&decoded, sizeof(uint32_t), bytes);
+
+    assert(data_len == data_len_read_back);
+
+    uint64_t num_elems = decode_compact_to_u64(&decoded.prefix_num_elements);
+    assert(num_elems == 6);
+    uint32_t output = 0;
+    uint32_t offset = 0;
+    uint8_t *b;
+
+    unsigned int *fixU32Ptr = vec_u32_decode(encode_hash);
+
+    scale_vector_foreach(&b, sizeof(uint32_t), &decoded) {
+        output = 0;
+        deserialize_fixed_int((void*)&output, b, 2, false);
+        assert(output ==*(fixU32Ptr + offset) );
+        offset++;
+    }
 }
 
 
@@ -280,5 +344,8 @@ int main()
     test_string();
     test_struct();
     test_tuple();
-    printf("test success, no errors\n");
+    test_array();
+    test_enum();
+
+    printf("Test success, no errors!!!!!\n");
 }
