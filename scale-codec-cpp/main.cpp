@@ -3,6 +3,7 @@
 #include <cassert>
 #include <dlfcn.h>
 #include <cstring>
+#include <scale/scale.hpp>
 using namespace std;
 
 void TestCompactU32Encode(void* handle){
@@ -90,10 +91,37 @@ void TestVecU32Encode(void* handle){
 }
 
 
+void TestScale()
+{
+    ScaleEncoderStream s;
+    uint32_t ui32 = 123u;
+    uint8_t ui8 = 234u;
+    std::string str = "asdasdasd";
+    auto * raw_str = "zxczxczx";
+    bool b = true;
+    CompactInteger ci = 123456789;
+    boost::variant<uint8_t, uint32_t, CompactInteger> vint = CompactInteger(12345);
+    std::optional<std::string> opt_str = "asdfghjkl";
+    std::optional<bool> opt_bool = false;
+    std::pair<uint8_t, uint32_t> pair{1u, 2u};
+    std::vector<uint32_t> coll_ui32 = {1u, 2u, 3u, 4u};
+    std::vector<std::string> coll_str = {"asd", "fgh", "jkl"};
+    std::vector<std::vector<int32_t>> coll_coll_i32 = {{1, 2, 3}, {4, 5, 6, 7}};
+    try {
+        s << ui32 << ui8 << str << raw_str << b << ci << vint;
+        s << opt_str << opt_bool << pair << coll_ui32 << coll_str << coll_coll_i32;
+    } catch (std::runtime_error &e) {
+        // handle error
+        // for example make and return outcome::result
+        return outcome::failure(e.code());
+    }
+
+}
+
 
 
 int main() {
-    void* handle = dlopen("lib/libscale_ffi.dylib", RTLD_NOW);
+    void* handle = dlopen("../lib/libscale_ffi.dylib", RTLD_NOW);
     if (!handle) {
         cerr << "Cannot open library: " << dlerror() << '\n';
         return 1;
