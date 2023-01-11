@@ -4,3 +4,6 @@ CMakeCache.txt
 Makefile
 scaleCodecCpp
 cmake-build-debug
+_deps
+_3rdParty
+compile_commands.json

@@ -2,24 +2,41 @@
 #include "../src/scale_ffi.h"
 #include <cassert>
 #include <dlfcn.h>
-#include <cstring>
 #include <scale/scale.hpp>
+#include <boost/algorithm/hex.hpp>
+//#include "scale-codec-cpp/include/scale/scale.hpp"
 using namespace std;
 
-void TestCompactU32Encode(void* handle){
+using scale::decode;
+using scale::encode;
+
+std::string to_hex(const std::vector<uint8_t>& s) {
+    std::stringstream stream;
+    for (const auto& v : s)
+    {
+        stream<< std::setfill('0') << std::setw(sizeof(v) * 2)<< std::hex << +v;
+    }
+    return stream.str();
+}
+
+
+void TestCompactU32(void* handle){
+    scale::ScaleEncoderStream s;
+    scale::CompactInteger value = 99999;
+    s << value;
     char* (*compact_u32_encode) (unsigned int);
     compact_u32_encode = (char* (*)(unsigned int))dlsym(handle, "compact_u32_encode");
-    assert(strcasecmp(compact_u32_encode(1), "04") == 0);
-    printf("TestCompactU32Encode success\n");
-}
+    char *encodeValue= compact_u32_encode(99999);
+    assert(strcasecmp(encodeValue,const_cast<char*>(to_hex(s.to_vector()).c_str())) == 0);
 
-
-void TestCompactU32Decode(void* handle){
     unsigned int (*compact_u32_decode) (char*);
     compact_u32_decode = (unsigned int (*)(char*))dlsym(handle, "compact_u32_decode");
-    assert(compact_u32_decode((char *)"04")== 1);
-    printf("TestCompactU32Decode success\n");
+    assert(compact_u32_decode(encodeValue)==scale::decode<scale::CompactInteger>(s.to_vector()).value());
+
+    printf("TestCompactU32 success\n");
 }
+
+
 
 void TestOptionBoolEncode(void* handle){
     char* (*option_bool_encode) (char*);
@@ -93,29 +110,35 @@ void TestVecU32Encode(void* handle){
 
 void TestScale()
 {
-    ScaleEncoderStream s;
+    scale::ScaleEncoderStream s;
     uint32_t ui32 = 123u;
     uint8_t ui8 = 234u;
     std::string str = "asdasdasd";
     auto * raw_str = "zxczxczx";
     bool b = true;
-    CompactInteger ci = 123456789;
-    boost::variant<uint8_t, uint32_t, CompactInteger> vint = CompactInteger(12345);
+    scale::CompactInteger ci = 123456789;
+    boost::variant<uint8_t, uint32_t, scale::CompactInteger> vint = scale::CompactInteger(12345);
     std::optional<std::string> opt_str = "asdfghjkl";
     std::optional<bool> opt_bool = false;
     std::pair<uint8_t, uint32_t> pair{1u, 2u};
     std::vector<uint32_t> coll_ui32 = {1u, 2u, 3u, 4u};
     std::vector<std::string> coll_str = {"asd", "fgh", "jkl"};
     std::vector<std::vector<int32_t>> coll_coll_i32 = {{1, 2, 3}, {4, 5, 6, 7}};
+
     try {
         s << ui32 << ui8 << str << raw_str << b << ci << vint;
         s << opt_str << opt_bool << pair << coll_ui32 << coll_str << coll_coll_i32;
     } catch (std::runtime_error &e) {
-        // handle error
-        // for example make and return outcome::result
-        return outcome::failure(e.code());
     }
 
+    scale::ByteArray data = s.to_vector();
+
+    std::stringstream stream;
+    for (const auto num : data) {
+        stream << std::hex << std::setw(2) << std::setfill('0') << num;
+    }
+//    const auto hex_str = hex_representation(data);
+    std::cout << stream.str() << '\n';
 }
 
 
@@ -126,8 +149,7 @@ int main() {
         cerr << "Cannot open library: " << dlerror() << '\n';
         return 1;
     }
-    TestCompactU32Encode(handle);
-    TestCompactU32Decode(handle);
+    TestCompactU32(handle);
     TestOptionBoolEncode(handle);
     TestOptionBoolDecode(handle);
     TestBoolEncode(handle);

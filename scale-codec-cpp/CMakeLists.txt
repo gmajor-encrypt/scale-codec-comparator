@@ -1,20 +1,19 @@
-cmake_minimum_required(VERSION 3.10.2)
+cmake_minimum_required(VERSION 3.22)
 
-include ( "cmake/HunterGate.cmake" )
+include(FetchContent)
 
-HunterGate(
-        URL https://github.com/soramitsu/soramitsu-hunter/archive/tags/v0.23.257-soramitsu17.tar.gz
-        SHA1 c7ccd337314b27485b75d0f0f5d5b42e7e3c2629
-)
+FetchContent_Declare(scale URL https://github.com/soramitsu/scale-codec-cpp/archive/refs/tags/v1.0.6.tar.gz)
+
+FetchContent_GetProperties(scale)
+if (NOT scale_POPULATED)
+    FetchContent_Populate(scale)
+    add_subdirectory(${scale_SOURCE_DIR} ${scale_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif ()
 
 project(scaleCodecCpp)
 
-add_subdirectory(scale-codec-cpp)
-message(${CMAKE_CURRENT_LIST_DIR})
-add_executable(${PROJECT_NAME} main.cpp)
-#find_package(scale REQUIRED)
-target_link_libraries(${PROJECT_NAME} scale-codec-cpp)
+set(CMAKE_CXX_STANDARD 17)
 
-file(GLOB LIBRARIES "lib/libscale_ffi.dylib")
-message("LIBRARIES = ${LIBRARIES}")
-target_link_libraries(${PROJECT_NAME} ${LIBRARIES})
+add_executable(${PROJECT_NAME} main.cpp)
+
+target_link_libraries(${PROJECT_NAME} scale)
