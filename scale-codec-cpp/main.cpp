@@ -4,7 +4,7 @@
 #include <dlfcn.h>
 #include <scale/scale.hpp>
 #include <boost/algorithm/hex.hpp>
-//#include "scale-codec-cpp/include/scale/scale.hpp"
+
 using namespace std;
 
 using scale::decode;
@@ -33,78 +33,187 @@ void TestCompactU32(void* handle){
     compact_u32_decode = (unsigned int (*)(char*))dlsym(handle, "compact_u32_decode");
     assert(compact_u32_decode(encodeValue)==scale::decode<scale::CompactInteger>(s.to_vector()).value());
 
-    printf("TestCompactU32 success\n");
+    printf("Test CompactU32 success\n");
 }
 
 
+void TestOptionBool(void* handle){
+    scale::ScaleEncoderStream s;
+    s << std::nullopt;
 
-void TestOptionBoolEncode(void* handle){
     char* (*option_bool_encode) (char*);
     option_bool_encode = (char* (*)(char*))dlsym(handle, "option_bool_encode");
-    assert(strcasecmp(option_bool_encode((char *)"None"), "00") == 0);
-    printf("TestOptionBoolEncode success\n");
-}
+    assert(strcasecmp(option_bool_encode((char *)"None"), const_cast<char*>(to_hex(s.to_vector()).c_str())) == 0);
 
-void TestOptionBoolDecode(void* handle){
     char* (*option_bool_decode) (char*);
     option_bool_decode = (char* (*)(char*))dlsym(handle, "option_bool_decode");
+
+    using optbool = std::optional<bool>;
+    scale::decode<scale::OptionalBool>(scale::ByteArray{1}).value();
+
     assert(strcasecmp(option_bool_decode((char *)"01"), "true") == 0);
-    printf("TestOptionBoolDecode success\n");
+
+    printf("Test Option<bool> success\n");
 }
 
-void TestBoolEncode(void* handle){
+void TestBool(void* handle){
+    scale::ScaleEncoderStream s;
+    s << true;
+
     char* (*bool_encode) (bool);
     bool_encode = (char* (*)(bool))dlsym(handle, "bool_encode");
-    assert(strcasecmp(bool_encode(true), "01") == 0);
-    printf("TestBoolEncode success\n");
-}
 
-void TestBoolDecode(void* handle){
+    assert(strcasecmp(bool_encode(true),const_cast<char*>(to_hex(s.to_vector()).c_str())) == 0);
+
     bool (*bool_decode) (char*);
     bool_decode = (bool (*)(char*))dlsym(handle, "bool_decode");
-    assert(bool_decode("01") == true);
-    printf("TestBoolEncode success\n");
+    assert(bool_decode("01") == scale::decode<bool>(scale::ByteArray{1}).value());
+    printf("Test Bool success\n");
 }
 
-void TestResultEncode(void* handle){
-    char* (*results_encode) (ResultsType*);
-    results_encode = (char* (*)(ResultsType*))dlsym(handle, "results_encode");
-    struct ResultsType resultTest = {};
-    resultTest.ok= 2;
-    resultTest.err= "";
-    assert(strcasecmp(results_encode(&resultTest), "0002000000") == 0);
-    printf("TestResultEncode success\n");
+
+struct MyType {
+    uint32_t data = 0;
+    uint8_t other;
+};
+scale::ScaleEncoderStream &operator<<(scale::ScaleEncoderStream &s, const MyType &v) {
+    return s << v.data << v.other;
+}
+scale::ScaleDecoderStream &operator>>(scale::ScaleDecoderStream &s, MyType &v) {
+    return s >> v.data >> v.other;
 }
 
-void TestResultDecode(void* handle){
-    ResultsType* (*results_decode) (char*);
-    results_decode = (ResultsType* (*)(char*))dlsym(handle, "results_decode");
-    struct ResultsType resultDecodeRaw = *results_decode("0002000000");
-    assert(resultDecodeRaw.ok==2);
-    printf("TestResultDecode success\n");
+
+void TestStruct(void* handle){
+    char* (*struct_encode) (CodecStruct*);
+    struct_encode = (char* (*)(CodecStruct*))dlsym(handle, "data_struct_encode");
+
+    struct CodecStruct resultTest = {};
+    resultTest.data= 10;
+    resultTest.other= 1;
+
+    MyType v = {10, 1};
+    scale::ScaleEncoderStream s;
+    s << v;
+    std::vector<uint8_t> encodeData = s.to_vector();
+    assert(strcasecmp(struct_encode(&resultTest), const_cast<char*>(to_hex(encodeData).c_str())) == 0);
+
+    MyType v2;
+    scale::ScaleDecoderStream s2{encodeData};
+    s2 >> v2;
+
+    CodecStruct* (*struct_decode) (char*);
+    struct_decode = (CodecStruct* (*)(char*))dlsym(handle, "data_struct_decode");
+    struct CodecStruct decodeRaw = *struct_decode("0a00000001");
+    assert(decodeRaw.data==v2.data);
+    assert(decodeRaw.other==v2.other);
+
+    printf("Test Struct success\n");
 }
 
-void TestStringEncode(void* handle){
+void TestTuple(void* handle){
+    char* (*tuple_encode) (TupleType*);
+    tuple_encode = (char* (*)(TupleType*))dlsym(handle, "tuple_u32u32_encode");
+
+    struct TupleType resultTest = {};
+    resultTest.a= 10;
+    resultTest.b= 1;
+
+    uint32_t a = 10;
+    uint32_t b = 1;
+    scale::ScaleEncoderStream s;
+    s << std::make_tuple(a,b);
+    std::vector<uint8_t> encodeData = s.to_vector();
+    assert(strcasecmp(tuple_encode(&resultTest), const_cast<char*>(to_hex(encodeData).c_str())) == 0);
+
+    using tuple_type = std::tuple<uint32_t, uint32_t>;
+    tuple_type tuple{};
+    scale::ScaleDecoderStream s2{encodeData};
+    s2 >> tuple;
+
+    TupleType* (*tuple_decode) (char*);
+    tuple_decode = (TupleType* (*)(char*))dlsym(handle, "tuple_u32u32_decode");
+    struct TupleType decodeRaw = *tuple_decode("0a00000001000000");
+
+    auto &&[a1, b1] = tuple;
+    assert(decodeRaw.a==a1);
+    assert(decodeRaw.b==b1);
+
+    printf("Test Tuple success\n");
+}
+
+
+void TestEnum(void* handle){
+    char* (*enum_encode) (EnumStruct*);
+    enum_encode = (char* (*)(EnumStruct*))dlsym(handle, "data_enum_encode");
+
+    struct EnumStruct resultTest = {};
+    resultTest.a= 10;
+    enum class TEnum : uint32_t { A = 10, B = 0, C = 0 };
+
+    scale::ScaleEncoderStream s;
+    s << TEnum::A;
+    std::vector<uint8_t> encodeData = s.to_vector();
+
+    assert(strcasecmp(enum_encode(&resultTest), const_cast<char*>(to_hex(encodeData).c_str())) == 0);
+    TEnum te{};
+    scale::ScaleDecoderStream s2{encodeData};
+    s2 >> te;
+    EnumStruct* (*enum_decode) (char*);
+    enum_decode = (EnumStruct* (*)(char*))dlsym(handle, "data_enum_decode");
+    struct EnumStruct decodeRaw = *enum_decode("0001000000");
+    assert(decodeRaw.a==10);
+    printf("Test Enum success\n");
+}
+
+
+
+void TestString(void* handle){
+    scale::ScaleEncoderStream s;
+    s << "Hamlet";
     char* (*string_encode) (char*);
     string_encode = (char* (*)(char*))dlsym(handle, "string_encode");
-    assert(strcasecmp(string_encode("Hamlet"), "1848616d6c6574") == 0);
-    printf("TestStringEncode success\n");
+    assert(strcasecmp(string_encode("Hamlet"), const_cast<char*>(to_hex(s.to_vector()).c_str())) == 0);
+
+    char* (*string_decode) (char*);
+    string_decode = (char* (*)(char*))dlsym(handle, "string_decode");
+
+    auto bytes = scale::ByteArray{24, 'h', 'a', 'm', 'l', 'e', 't'};
+    scale::ScaleDecoderStream sd( bytes);
+    std::string v;
+    sd >> v;
+    assert(strcasecmp(string_decode("1848616d6c6574"), v.c_str())==0);
+
+
+    printf("Test String success\n");
 }
 
-void TestFixU32Encode(void* handle){
-    char* (*fixU32_encode) (unsigned int*,unsigned int);
-    fixU32_encode = (char* (*)(unsigned int*,unsigned int))dlsym(handle, "fixU32_encode");
-    uint32_t values[6] = { 1,2,3,4,5,6 };
-    assert(strcasecmp(fixU32_encode(values,6), "010000000200000003000000040000000500000006000000") == 0);
-    printf("TestFixU32Encode success\n");
-}
 
-void TestVecU32Encode(void* handle){
+void TestArray(void* handle){
     char* (*vec_u32_encode) (unsigned int*,unsigned int);
     vec_u32_encode = (char* (*)(unsigned int*,unsigned int))dlsym(handle, "vec_u32_encode");
     uint32_t values[6] = { 1,2,3,4,5,6 };
-    assert(strcasecmp(vec_u32_encode(values,6), "18010000000200000003000000040000000500000006000000") == 0);
-    printf("TestVecU32Encode success\n");
+
+    std::vector<uint32_t> coll_ui32 = {1,2,3,4,5,6};
+    scale::ScaleEncoderStream s;
+    s << coll_ui32;
+    std::vector<uint8_t> encodeData = s.to_vector();
+    assert(strcasecmp(vec_u32_encode(values,6),const_cast<char*>(to_hex(encodeData).c_str())) == 0);
+
+    unsigned int* (*vec_u32_decode) (char*);
+    vec_u32_decode = (unsigned int* (*)(char*))dlsym(handle, "vec_u32_decode");
+    unsigned int *fixU32Ptr = vec_u32_decode("18010000000200000003000000040000000500000006000000");
+
+    std::vector<uint32_t> coll_ui32_value;
+    scale::ScaleDecoderStream s2{encodeData};
+    s2>>coll_ui32_value;
+
+    for ( int i = 0; i < 6; i++ ) {
+        assert(coll_ui32_value[i]==*(fixU32Ptr + i));
+    }
+
+
+    printf("Test Vec<u32> success\n");
 }
 
 
@@ -149,16 +258,18 @@ int main() {
         cerr << "Cannot open library: " << dlerror() << '\n';
         return 1;
     }
+
     TestCompactU32(handle);
-    TestOptionBoolEncode(handle);
-    TestOptionBoolDecode(handle);
-    TestBoolEncode(handle);
-    TestBoolDecode(handle);
-    TestResultEncode(handle);
-    TestResultDecode(handle);
-    TestStringEncode(handle);
-    TestFixU32Encode(handle);
-    TestVecU32Encode(handle);
+    TestOptionBool(handle);
+    TestBool(handle);
+    TestStruct(handle);
+    TestString(handle);
+    TestTuple(handle);
+    TestArray(handle);
+    TestEnum(handle);
+
     dlclose(handle);
+    std::cout << "Warning: Not support Results type"<< '\n';
+    std::cout << "Warning: Not support fixed array type"<< '\n';
     return 0;
 }
