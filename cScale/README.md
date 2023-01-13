@@ -1,10 +1,9 @@
 # cScale
 
 
-## install
+## Install
 
 ```bash
-git clone https://github.com/gmajor-encrypt/cScale
 cmake --build .
 ```
 

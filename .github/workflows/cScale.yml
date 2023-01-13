@@ -31,6 +31,5 @@ jobs:
       - name: Test
         run: |
           cd cScale
-          git clone https://github.com/gmajor-encrypt/cScale.git
           cmake --build .
           ./MyProject
