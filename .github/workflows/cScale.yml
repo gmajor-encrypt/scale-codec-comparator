@@ -21,7 +21,9 @@ jobs:
           default: true
 
       - name: build-ffi
-        run: make
+        run: |
+          mkdir lib
+          make
 
       - name: Setup Cpp
         uses: aminya/setup-cpp@v1
