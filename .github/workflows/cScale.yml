@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'cScale/**'
+      - '.github/workflows/cScale.yml'
 jobs:
   test:
     name: Build and TEST
@@ -27,6 +28,7 @@ jobs:
         with:
           compiler: gcc
           cmake: true
+          clangtidy: true
 
       - name: Test
         run: |
