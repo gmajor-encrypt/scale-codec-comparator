@@ -253,7 +253,10 @@ void TestScale()
 
 
 int main() {
-    void* handle = dlopen("../lib/libscale_ffi.dylib", RTLD_NOW);
+    void* handle = dlopen("../lib/libscale_ffi.so", RTLD_NOW);
+    #ifdef __APPLE__
+        handle = dlopen("../lib/libscale_ffi.dylib", RTLD_NOW);
+    #endif
     if (!handle) {
         cerr << "Cannot open library: " << dlerror() << '\n';
         return 1;
