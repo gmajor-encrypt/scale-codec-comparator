@@ -1,4 +1,4 @@
-# as-scale-codec
+# scale-ts
 
 ## Requirement
 

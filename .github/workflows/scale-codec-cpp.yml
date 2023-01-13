@@ -1,0 +1,40 @@
+name: scale-codec-cpp-test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'cScale/**'
+jobs:
+  test:
+    name: Build and TEST
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          default: true
+
+      - name: build-ffi
+        run: make
+
+      - name: Setup Cpp
+        uses: aminya/setup-cpp@v1
+        with:
+          compiler: gcc
+          cmake: true
+          ninja: true
+          vcpkg: true
+          cppcheck: true
+          clangtidy: true
+
+      - name: Test
+        run: |
+          cd scale-codec-cpp
+          cmake .
+          cmake --build . --target scaleCodecCpp -j 8
+          ./scaleCodecCpp

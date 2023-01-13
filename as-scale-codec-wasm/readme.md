@@ -10,8 +10,8 @@ The following table shows the status of the types and their arrays:
 | Type          |             Support             | 
 |---------------|:-------------------------------:|
 | `Compact`     |                *                |
-| `Option`      |                                 |
-| `Bool`        |                                 |
+| `Option`      |                *                |
+| `Bool`        |                *                |
 | `Tuple`       | Limited Support, has some error | 
 | `Strcut`      |           not support           | 
 | `Result`      |           not support           | 
