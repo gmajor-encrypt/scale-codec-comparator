@@ -1,3 +1,0 @@
-[submodule "scale-codec-cpp/scale-codec-cpp"]
-	path = scale-codec-cpp/scale-codec-cpp
-	url = https://github.com/soramitsu/scale-codec-cpp.git
