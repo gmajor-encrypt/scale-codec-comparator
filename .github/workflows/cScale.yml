@@ -35,6 +35,6 @@ jobs:
       - name: Test
         run: |
           cd cScale
-          git submodule update --init --recursive
+          git clone https://github.com/gmajor-encrypt/cScale.git
           cmake --build .
           ./MyProject
