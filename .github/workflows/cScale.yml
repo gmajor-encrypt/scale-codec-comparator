@@ -33,5 +33,6 @@ jobs:
       - name: Test
         run: |
           cd cScale
+          cmake . 
           cmake --build .
           ./MyProject
