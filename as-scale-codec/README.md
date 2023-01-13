@@ -1,4 +1,4 @@
-# scale-codec-js-library
+# as-scale-codec
 
 ## Requirement
 
@@ -9,5 +9,6 @@
 ## Test
 
 ```bash
+npm install
 npm run test
 ```
