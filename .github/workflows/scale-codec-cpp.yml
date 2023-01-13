@@ -27,10 +27,6 @@ jobs:
         with:
           compiler: gcc
           cmake: true
-          ninja: true
-          vcpkg: true
-          cppcheck: true
-          clangtidy: true
 
       - name: Test
         run: |
