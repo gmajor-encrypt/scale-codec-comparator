@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'cScale/**'
+      - 'scale-codec-cpp/**'
 jobs:
   test:
     name: Build and TEST
