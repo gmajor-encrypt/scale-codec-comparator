@@ -23,14 +23,9 @@ jobs:
       - name: build-ffi
         run: make
 
-      - name: Setup Cpp
-        uses: aminya/setup-cpp@v1
-        with:
-          compiler: gcc
-          cmake: true
-          clangtidy: true
-
       - name: Test
+        env:
+          DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
         run: |
           cd scale-codec-cpp
           cmake .
