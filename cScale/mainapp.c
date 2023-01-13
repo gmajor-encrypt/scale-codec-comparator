@@ -94,11 +94,7 @@ void test_scale_compact_u32(){
     char *output = decode_compact_to_hex(&compact);
     serialize_compact_int(serialized, (uint64_t *) &serialized_len, &compact);
     uint32_t decoded = strtoul(output, NULL, 16);
-    char *hex[80];
-    for(int i=0; i < serialized_len; i++){
-        sprintf(hex,"%s%02X",hex,serialized[i]);
-    }
-    assert(strcasecmp(compact_u32_encode(69), hex) == 0);
+    assert(strcasecmp(compact_u32_encode(69), to_hash(serialized,serialized_len)) == 0);
     assert(compact_u32_decode("1501")== decoded);
 
     free(output);
@@ -109,11 +105,7 @@ void test_option_boolean(){
     size_t bool_option_serialized_len = 0;
 
     serialize_scale_option(bool_option_serialized, &bool_option_serialized_len, None, NULL, 1);
-    char hex[80];
-    for(int i=0; i < bool_option_serialized_len; i++){
-        sprintf(hex,"%s%02x",hex,bool_option_serialized[i]);
-    }
-    assert(strcasecmp(option_bool_encode("None"), hex) == 0);
+    assert(strcasecmp(option_bool_encode("None"), to_hash(bool_option_serialized,bool_option_serialized_len)) == 0);
 
 
     enum scale_option option;
