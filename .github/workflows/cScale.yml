@@ -22,7 +22,6 @@ jobs:
 
       - name: build-ffi
         run: |
-          mkdir lib
           make
 
       - name: Setup Cpp
