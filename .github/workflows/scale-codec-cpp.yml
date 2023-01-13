@@ -24,8 +24,6 @@ jobs:
         run: make
 
       - name: Test
-        env:
-          DEVELOPER_DIR: /Applications/Xcode_11.7.app/Contents/Developer
         run: |
           cd scale-codec-cpp
           cmake .
