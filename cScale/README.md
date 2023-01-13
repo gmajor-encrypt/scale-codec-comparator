@@ -4,7 +4,8 @@
 ## install
 
 ```bash
-git submodule update --init --recursive
+git clone https://github.com/gmajor-encrypt/cScale
+cmake --build .
 ```
 
 
