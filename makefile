@@ -7,7 +7,7 @@ endif
 all: target/debug/libscale_ffi.$(EXT)
 
 target/debug/libscale_ffi.$(EXT): src/lib.rs Cargo.toml
-	cargo build && mv target/debug/libscale_ffi.$(EXT) lib/libscale_ffi.$(EXT)
+	cargo build && mkdir lib && mv target/debug/libscale_ffi.$(EXT) lib/libscale_ffi.$(EXT)
 
 clean:
 	rm -rf target
