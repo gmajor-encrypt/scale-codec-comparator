@@ -9,7 +9,7 @@ on:
 jobs:
   test:
     name: Build and TEST
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
         with:
@@ -22,13 +22,6 @@ jobs:
 
       - name: build-ffi
         run: make
-
-      - name: Setup Cpp
-        uses: aminya/setup-cpp@v1
-        with:
-          compiler: gcc
-          cmake: true
-          clangtidy: true
 
       - name: Test
         run: |

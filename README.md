@@ -6,7 +6,11 @@
 [![scale-python-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-python.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-python.yml)
 [![scale-js-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-js.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-js.yml)
 [![go-substrate-rpc-client-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/go-substrate-rpc-client.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/go-substrate-rpc-client.yml)
-
+[![cScale-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/cScale.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/cScale.yml)
+[![scale-codec-js-library-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-js-library.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-js-library.yml)
+[![as-scale-codec-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/as-scale-codec.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/as-scale-codec.yml)
+[![scale-codec-cpp-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-cpp.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-cpp.yml)
+[![scale-ts-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ts.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ts.yml)
 
 
 To date, there are [10 published](https://docs.substrate.io/reference/scale-codec/) implementations of the SCALE Codec. Since each is implemented by a different team & [the reference implementation](https://github.com/paritytech/parity-scale-codec) still introduces small fixes,
