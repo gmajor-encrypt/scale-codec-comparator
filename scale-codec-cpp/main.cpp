@@ -10,6 +10,18 @@ using namespace std;
 using scale::decode;
 using scale::encode;
 
+#ifndef NDEBUG
+#   define ASSERT(condition, message) \
+    do { \
+        if (! (condition)) { \
+            std::cerr << "Assertion `" #condition "` failed in "<< ": " << message << std::endl; \
+            std::terminate(); \
+        } \
+    } while (false)
+#else
+#   define ASSERT(condition, message) do { } while (false)
+#endif
+
 std::string to_hex(const std::vector<uint8_t>& s) {
     std::stringstream stream;
     for (const auto& v : s)
@@ -155,14 +167,14 @@ void TestEnum(void* handle){
     s << TEnum::A;
     std::vector<uint8_t> encodeData = s.to_vector();
 
-    assert(strcasecmp(enum_encode(&resultTest), const_cast<char*>(to_hex(encodeData).c_str())) == 0);
+    ASSERT(strcasecmp(enum_encode(&resultTest), const_cast<char*>(to_hex(encodeData).c_str())) == 0, "Enum encode verify fail");
     TEnum te{};
     scale::ScaleDecoderStream s2{encodeData};
     s2 >> te;
     EnumStruct* (*enum_decode) (char*);
     enum_decode = (EnumStruct* (*)(char*))dlsym(handle, "data_enum_decode");
     struct EnumStruct decodeRaw = *enum_decode("0001000000");
-    assert(decodeRaw.a==10);
+    ASSERT(decodeRaw.a==10,"Enum decode verify fail");
     printf("Test Enum success\n");
 }
 
@@ -269,10 +281,9 @@ int main() {
     TestString(handle);
     TestTuple(handle);
     TestArray(handle);
-    TestEnum(handle);
-
-    dlclose(handle);
     std::cout << "Warning: Not support Results type"<< '\n';
     std::cout << "Warning: Not support fixed array type"<< '\n';
+    TestEnum(handle);
+    dlclose(handle);
     return 0;
 }
