@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'go-substrate-rpc-client/**'
+      - '.github/workflows/go-substrate-rpc-client.yml'
 
 jobs:
   test:
@@ -19,6 +20,16 @@ jobs:
         with:
           toolchain: stable
           default: true
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: build-ffi
         run: make

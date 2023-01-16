@@ -26,13 +26,13 @@ func bytesToHex(b []byte) string {
 }
 
 func TestCompactU32(t *testing.T) {
-	values := []uint{2, 65536, 0}
+	values := []uint{2, 65536, 0, 100, 999999, 99999999}
 	for _, value := range values {
 		var buffer = bytes.Buffer{}
 		assert.NoError(t, scale.NewEncoder(&buffer).EncodeUintCompact(*big.NewInt(int64(value))))
 		assert.Equal(t, CompactU32Encode(value), bytesToHex(buffer.Bytes()))
 	}
-	encodeValue := []string{"08", "02000400", "00"}
+	encodeValue := []string{"08", "02000400", "00", "04", "fe83d717", "fe083d00"}
 	for _, value := range encodeValue {
 		var buffer = bytes.Buffer{}
 		buffer.Write(hexToBytes(value))
@@ -216,14 +216,6 @@ func TestFixedU32(t *testing.T) {
 		assert.NoError(t, scale.NewDecoder(&buffer).Decode(&target))
 		assert.EqualValues(t, FixU32Decode(value), ArrayU32ToUintSlice(target))
 	}
-}
-
-func InterfaceArrToUintArr(v []interface{}) []uint {
-	var uintArr []uint
-	for _, v := range v {
-		uintArr = append(uintArr, uint(v.(uint32)))
-	}
-	return uintArr
 }
 
 func ArrayU32ToUintArr(v [6]uint32) []uint32 {
