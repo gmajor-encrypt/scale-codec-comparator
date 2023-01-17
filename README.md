@@ -1,5 +1,16 @@
 # Scale-codec-comparator
 
+To date, there are [10 published](https://docs.substrate.io/reference/scale-codec/) implementations of the SCALE Codec. Since each is implemented by a different team & [the reference implementation](https://github.com/paritytech/parity-scale-codec) still introduces small fixes,
+it would be beneficial to compile a table of feature-completeness. This would provide (some) assurance that the implementation in a given language is safe & sound to use.
+
+Scale-codec-comarator provides the FFI function of the parity-scale-codec library, which can compare the implementation results of various SCALE Codecs
+
+[GitHub action](https://github.com/gmajor-encrypt/scale-codec-comparator/tree/main/.github/workflows) is integrated to run unit tests using the FFI of Rust lib
+
+
+
+### Comparator Result Badges
+
 [![scale-go-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-go.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-go.yml)
 [![scale-php-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-php.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-php.yml)
 [![scale-ruby-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ruby.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ruby.yml)
@@ -11,14 +22,6 @@
 [![as-scale-codec-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/as-scale-codec.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/as-scale-codec.yml)
 [![scale-codec-cpp-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-cpp.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-cpp.yml)
 [![scale-ts-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ts.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ts.yml)
-
-
-To date, there are [10 published](https://docs.substrate.io/reference/scale-codec/) implementations of the SCALE Codec. Since each is implemented by a different team & [the reference implementation](https://github.com/paritytech/parity-scale-codec) still introduces small fixes,
-it would be beneficial to compile a table of feature-completeness. This would provide (some) assurance that the implementation in a given language is safe & sound to use.
-
-Scale-codec-comarator provides the FFI function of the parity-scale-codec library, which can compare the implementation results of various SCALE Codecs
-
-[GitHub action](https://github.com/gmajor-encrypt/scale-codec-comparator/tree/main/.github/workflows) is integrated to run unit tests using the FFI of Rust lib
 
 The tests of the following scale libraries have been completed
 
@@ -41,10 +44,9 @@ The tests of the following scale libraries have been completed
 make
 ```
 
-## How to test
+## FFI 
 
 The FFI are definitions here https://github.com/gmajor-encrypt/scale-codec-comparator/blob/main/src/scale_ffi.h
-
 
 ## How to Compare
 
@@ -52,6 +54,8 @@ We use [the reference implementation](https://github.com/paritytech/parity-scale
 compare with the results of other implementations of the SCALE Codec test.
 If the test fails, the implementation is inconsistent with parity-scale.
 You can simply get the test results from the top badges.
+
+## How to test
 
 ### scale.go
 ```bash
