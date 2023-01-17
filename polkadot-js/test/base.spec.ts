@@ -4,7 +4,7 @@ const ref = require('ref-napi')
 const RefStruct = require('ref-struct-di')(ref);
 const ArrayType = require('ref-array-di')(ref);
 import {Bool, TypeRegistry, u32, U8} from '@polkadot/types';
-import {bool, Compact, Enum, Option, Result, Struct, Text, Tuple, U32, Vec, VecFixed} from '@polkadot/types-codec';
+import {Compact, Enum, Result, Struct, Text, Tuple, U32, Vec, VecFixed,OptionBool} from '@polkadot/types-codec';
 
 let rootPath = process.env.FFI_PATH || path.resolve(path.dirname(path.dirname(__dirname)))
 
@@ -78,13 +78,13 @@ describe('base ffi codec', (): void => {
 
 
     it('encodes option<bool>', (): void => {
-        expect(tohex(new Option(registry, bool, null).toU8a())).toEqual(libm.option_bool_encode("NONE"));
-        expect(tohex(new Option(registry, bool, true).toU8a())).toEqual(libm.option_bool_encode("true"));
-        expect(tohex(new Option(registry, bool, false).toU8a())).toEqual(libm.option_bool_encode("false"));
+        expect(tohex(new OptionBool(registry, null).toU8a())).toEqual(libm.option_bool_encode("NONE"));
+        expect(tohex(new OptionBool(registry, true).toU8a())).toEqual(libm.option_bool_encode("true"));
+        expect(tohex(new OptionBool(registry, false).toU8a())).toEqual(libm.option_bool_encode("false"));
     });
     it('decode option<bool>', (): void => {
-        expect(new Option(registry, bool, new Uint8Array([1, 1])).toHuman()).toEqual(libm.option_bool_decode("01") === 'true');
-        expect(new Option(registry, bool, new Uint8Array([0, 0])).toHuman()).toEqual(libm.option_bool_decode("00") == "None" ? null : "true");
+        expect(new OptionBool(registry, new Uint8Array([1, 1])).toHuman()).toEqual(libm.option_bool_decode("01") === 'true');
+        expect(new OptionBool(registry, new Uint8Array([0, 0])).toHuman()).toEqual(libm.option_bool_decode("00") == "None" ? null : "true");
     });
 
     it('encodes bool', (): void => {
