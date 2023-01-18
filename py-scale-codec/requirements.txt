@@ -6,5 +6,5 @@ idna==3.3
 more-itertools==8.13.0
 pycparser==2.21
 requests==2.28.1
-scalecodec==1.0.38
+scalecodec==1.1.4
 urllib3==1.26.10
