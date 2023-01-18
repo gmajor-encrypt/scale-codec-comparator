@@ -6,6 +6,11 @@ on:
     paths:
       - 'go-substrate-rpc-client/**'
       - '.github/workflows/go-substrate-rpc-client.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'go-substrate-rpc-client/**'
+      - '.github/workflows/go-substrate-rpc-client.yml'
 
 jobs:
   test:

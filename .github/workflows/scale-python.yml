@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - 'py-scale-codec/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'py-scale-codec/**'
 jobs:
   test:
     name: Build and TEST

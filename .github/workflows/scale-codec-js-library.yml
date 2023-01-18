@@ -5,6 +5,11 @@ on:
     branches: [main]
     paths:
       - 'scale-codec-js-library/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'scale-codec-js-library/**'
+      -
 jobs:
   test:
     name: Build and TEST

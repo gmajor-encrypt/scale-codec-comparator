@@ -32,3 +32,35 @@ updates:
     target-branch: 'main'
     allow:
       - dependency-name: 'scale-ts'
+
+  - package-ecosystem: 'gomod'
+    directory: '/scale.go'
+    schedule:
+      interval: 'daily'
+    target-branch: 'main'
+    allow:
+      - dependency-name: 'github.com/itering/scale.go'
+
+  - package-ecosystem: 'gomod'
+    directory: '/go-substrate-rpc-client'
+    schedule:
+      interval: 'daily'
+    target-branch: 'main'
+    allow:
+      - dependency-name: 'github.com/centrifuge/go-substrate-rpc-client'
+
+  - package-ecosystem: 'pip'
+    directory: '/py-scale-codec'
+    schedule:
+      interval: 'daily'
+    target-branch: 'main'
+    allow:
+      - dependency-name: 'scalecodec'
+
+  - package-ecosystem: 'bundler'
+    directory: '/scale.rb'
+    schedule:
+      interval: 'daily'
+    target-branch: 'main'
+    allow:
+      - dependency-name: 'scale.rb'

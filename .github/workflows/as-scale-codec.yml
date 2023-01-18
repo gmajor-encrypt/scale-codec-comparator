@@ -5,6 +5,12 @@ on:
     branches: [main]
     paths:
       - 'as-scale-codec/**'
+      - 'as-scale-codec-wasm/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'as-scale-codec/**'
+      - 'as-scale-codec-wasm/**'
 jobs:
   test:
     name: Build and TEST

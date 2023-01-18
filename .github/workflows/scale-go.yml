@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - 'scale.go/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'scale.go/**'
 
 jobs:
   test:

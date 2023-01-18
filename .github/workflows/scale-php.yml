@@ -5,7 +5,10 @@ on:
     branches: [main]
     paths:
       - 'php-scale-codec/**'
-
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'php-scale-codec/**'
 jobs:
   test:
     name: Build and TEST

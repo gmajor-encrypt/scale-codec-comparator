@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - 'polkadot-js/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'polkadot-js/**'
 jobs:
   test:
     name: Build and TEST
