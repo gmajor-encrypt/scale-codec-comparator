@@ -1,0 +1,34 @@
+version: 2
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/polkadot-js'
+    schedule:
+      interval: 'daily'
+    target-branch: 'main'
+    allow:
+      - dependency-name: '@polkadot/api'
+
+  - package-ecosystem: 'npm'
+    directory: '/as-scale-codec-wasm'
+    schedule:
+      interval: 'daily'
+    target-branch: 'main'
+    allow:
+      - dependency-name: 'as-scale-codec'
+
+  - package-ecosystem: 'npm'
+    directory: '/scale-codec-js-library'
+    schedule:
+      interval: 'daily'
+    target-branch: 'main'
+    allow:
+      - dependency-name: '@scale-codec/core'
+      - dependency-name: '@scale-codec/definition-runtime'
+
+  - package-ecosystem: 'npm'
+    directory: '/scale-ts'
+    schedule:
+      interval: 'daily'
+    target-branch: 'main'
+    allow:
+      - dependency-name: 'scale-ts'
