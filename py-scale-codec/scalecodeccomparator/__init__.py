@@ -1,6 +1,7 @@
 from cffi import FFI
 from pathlib import Path
 import os
+import platform
 
 
 class Codec:
@@ -65,7 +66,11 @@ struct TupleType {
 char* tuple_u32u32_encode(struct TupleType* raw);
 struct TupleType*  tuple_u32u32_decode(char* raw);
         """)
-    lib = ffi.dlopen(str(binPath) + '/lib/libscale_ffi.dylib')
+
+    EXT = "dylib"
+    if platform.system() != "Darwin":
+        EXT = "so"
+    lib = ffi.dlopen(str(binPath) + '/lib/libscale_ffi.' + EXT)
 
     def compact_u32_encode(self, uint32):
         return self.to_utf8(self.lib.compact_u32_encode(uint32))
@@ -76,7 +81,7 @@ struct TupleType*  tuple_u32u32_decode(char* raw);
 
     # boolValue will be None, True, False
     def option_bool_encode(self, raw):
-        return self.to_utf8(self.lib.option_bool_encode( self.str_to_ffi_string(raw)))
+        return self.to_utf8(self.lib.option_bool_encode(self.str_to_ffi_string(raw)))
 
     def option_bool_decode(self, raw):
         raw = self.str_to_ffi_string(raw)
