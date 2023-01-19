@@ -94,12 +94,12 @@ final class BaseTest extends TestCase
      */
     public function testOptionBool ()
     {
-        $this->assertEquals($this->codec->createTypeByTypeString("Option<bool>")->encode(null), $this->FFICodec->OptionBoolEncode("None"));
-        $this->assertEquals($this->codec->createTypeByTypeString("Option<bool>")->encode(true), $this->FFICodec->OptionBoolEncode("true"));
-        $this->assertEquals($this->codec->createTypeByTypeString("Option<bool>")->encode(false), $this->FFICodec->OptionBoolEncode("false"));
-        $this->assertEquals($this->codec->process("Option<bool>", new ScaleBytes("01")), $this->FFICodec->OptionBoolDecode("01") == "true");
-        $this->assertEquals($this->codec->process("Option<bool>", new ScaleBytes("02")), $this->FFICodec->OptionBoolDecode("02") == "true");
-        $this->assertEquals($this->codec->process("Option<bool>", new ScaleBytes("00")), $this->FFICodec->OptionBoolDecode("00") == "None" ? null : true);
+        $this->assertEquals($this->codec->createTypeByTypeString("OptionBool")->encode(null), $this->FFICodec->OptionBoolEncode("None"));
+        $this->assertEquals($this->codec->createTypeByTypeString("OptionBool")->encode(true), $this->FFICodec->OptionBoolEncode("true"));
+        $this->assertEquals($this->codec->createTypeByTypeString("OptionBool")->encode(false), $this->FFICodec->OptionBoolEncode("false"));
+        $this->assertEquals($this->codec->process("OptionBool", new ScaleBytes("01")), $this->FFICodec->OptionBoolDecode("01") == "true");
+        $this->assertEquals($this->codec->process("OptionBool", new ScaleBytes("02")), $this->FFICodec->OptionBoolDecode("02") == "true");
+        $this->assertEquals($this->codec->process("OptionBool", new ScaleBytes("00")), $this->FFICodec->OptionBoolDecode("00") == "None" ? null : true);
     }
 
     /**
