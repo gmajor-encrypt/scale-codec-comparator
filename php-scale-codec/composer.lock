@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "126b6dc80cf25ab07216f5c9453a2211",
+    "content-hash": "376f6ac67d0a4937bd0c111eaa0395a6",
     "packages": [
         {
             "name": "bitwasp/buffertools",
@@ -18,13 +18,7 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/Bit-Wasp/buffertools-php/zipball/43c8bc231e5bc3d1f9bf90655b18c8f3e02418a9",
                 "reference": "43c8bc231e5bc3d1f9bf90655b18c8f3e02418a9",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "shasum": ""
             },
             "require": {
                 "php-64bit": ">=7.0.0"
@@ -64,23 +58,17 @@
         },
         {
             "name": "gmajor/substrate-codec-php",
-            "version": "v1.0.0",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gmajor-encrypt/php-scale-codec.git",
-                "reference": "639f039ce0ce908f86866f6776a7788cd8970040"
+                "reference": "912ea44bcc32c7bf1bcf13813efcc9b3c266712e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gmajor-encrypt/php-scale-codec/zipball/639f039ce0ce908f86866f6776a7788cd8970040",
-                "reference": "639f039ce0ce908f86866f6776a7788cd8970040",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/gmajor-encrypt/php-scale-codec/zipball/912ea44bcc32c7bf1bcf13813efcc9b3c266712e",
+                "reference": "912ea44bcc32c7bf1bcf13813efcc9b3c266712e",
+                "shasum": ""
             },
             "require": {
                 "bitwasp/buffertools": "dev-master",
@@ -111,9 +99,9 @@
             ],
             "support": {
                 "issues": "https://github.com/gmajor-encrypt/php-scale-codec/issues",
-                "source": "https://github.com/gmajor-encrypt/php-scale-codec/tree/v1.0.0"
+                "source": "https://github.com/gmajor-encrypt/php-scale-codec/tree/v1.0.1"
             },
-            "time": "2023-01-18T02:45:16+00:00"
+            "time": "2023-01-19T01:02:16+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -121,26 +109,20 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/schmittjoh/php-option.git",
-                "reference": "dc5ff11e274a90cc1c743f66c9ad700ce50db9ab"
+                "reference": "00430c0532ae544fb1c81e45705b3d356bfc25d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/schmittjoh/php-option/zipball/dc5ff11e274a90cc1c743f66c9ad700ce50db9ab",
-                "reference": "dc5ff11e274a90cc1c743f66c9ad700ce50db9ab",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/schmittjoh/php-option/zipball/00430c0532ae544fb1c81e45705b3d356bfc25d0",
+                "reference": "00430c0532ae544fb1c81e45705b3d356bfc25d0",
+                "shasum": ""
             },
             "require": {
                 "php": "^7.2.5 || ^8.0"
             },
             "require-dev": {
-                "bamarni/composer-bin-plugin": "^1.8",
-                "phpunit/phpunit": "^8.5.28 || ^9.5.21"
+                "bamarni/composer-bin-plugin": "^1.8.1",
+                "phpunit/phpunit": "^8.5.30 || ^9.5.25"
             },
             "default-branch": true,
             "type": "library",
@@ -183,7 +165,7 @@
             ],
             "support": {
                 "issues": "https://github.com/schmittjoh/php-option/issues",
-                "source": "https://github.com/schmittjoh/php-option/tree/1.9.0"
+                "source": "https://github.com/schmittjoh/php-option/tree/master"
             },
             "funding": [
                 {
@@ -195,7 +177,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-07-30T15:51:26+00:00"
+            "time": "2022-10-15T20:52:05+00:00"
         }
     ],
     "packages-dev": [
@@ -2497,5 +2479,5 @@
         "php": ">=8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.3.0"
 }
