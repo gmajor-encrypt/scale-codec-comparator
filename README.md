@@ -119,7 +119,7 @@ cd cScale && git submodule update --init --recursive && cmake --build . && ./MyP
 cd scale-codec-cpp && cmake . && cmake --build . --target scaleCodecCpp -j 8 && ./scaleCodecCpp
 ```
 
-### Auto est
+### Auto Test
 
 [Dependabot](https://github.com/gmajor-encrypt/scale-codec-comparator/blob/main/.github/dependabot.yml)  here declares that all the above libs will be automatically updated and tested through pull requests if there is a new version. Here are a few examples:
 
