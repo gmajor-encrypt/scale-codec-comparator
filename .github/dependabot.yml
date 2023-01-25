@@ -7,6 +7,7 @@ updates:
     target-branch: 'main'
     allow:
       - dependency-name: '@polkadot/api'
+      - dependency-name: '@polkadot/types-codec'
 
   - package-ecosystem: 'npm'
     directory: '/as-scale-codec-wasm'
