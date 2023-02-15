@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@scale-codec/core": "^1.1.1",
-    "@scale-codec/definition-runtime": "^2.2.2",
+    "@scale-codec/definition-runtime": "^3.0.0",
     "ffi-napi": "^4.0.3",
     "ref-array-di": "^1.2.2",
     "ref-struct-di": "^1.1.1"
