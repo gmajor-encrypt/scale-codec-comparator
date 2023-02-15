@@ -1301,14 +1301,6 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@scale-codec/core@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.npmmirror.com/@scale-codec/core/-/core-1.1.1.tgz#7ac2914ab8faccb786ac538e59517f593be8eac3"
-  integrity sha512-feiLqQYopj3VXOCFa7xvRexFB8Ik7NJd8L9wGoPzeux+83cnwMjBPQu2TdcKDcchOMtXZ6RyFfF3MNuun75Shg==
-  dependencies:
-    "@scale-codec/enum" "^1.1.1"
-    "@scale-codec/util" "^1.1.1"
-
 "@scale-codec/core@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@scale-codec/core/-/core-2.0.0.tgz#3acffca1fde002d8e97b7d8c2b71ee62cf83eb8e"
@@ -1326,11 +1318,6 @@
     "@scale-codec/util" "^1.1.1"
     fmt-subs "^1.1.1"
     type-fest "^3.5.5"
-
-"@scale-codec/enum@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.npmmirror.com/@scale-codec/enum/-/enum-1.1.1.tgz#b50578d5c3aa8c62056e6f37682b8f5c37db94b1"
-  integrity sha512-GTB5LPcqjZOoWSPn90q97yMUZP6PD1Y3Lk+WnvvqkW1nOgz9vXEqTchm+eYtV23tTeh594Dg5plElA/mVHEUfQ==
 
 "@scale-codec/enum@^2.0.0":
   version "2.0.0"
