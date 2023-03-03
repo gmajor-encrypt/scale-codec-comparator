@@ -1301,7 +1301,7 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@scale-codec/core@^2.0.0", "@scale-codec/core@^2.0.1":
+"@scale-codec/core@^2.0.1":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@scale-codec/core/-/core-2.0.1.tgz#8820043d2ed9627ede46211768669253f3ed68a1"
   integrity sha512-3Ei7Gf3wNDrP5l7W/dEF9Q7Py1ttdNTFulzNNdFrqBw8v1khyC7SZIcYpsbAJ5uo/PDIhhK4FKOrK467I0vv4Q==
@@ -1309,22 +1309,21 @@
     "@scale-codec/enum" "^2.1.1"
     "@scale-codec/util" "^1.1.2"
 
-"@scale-codec/definition-runtime@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@scale-codec/definition-runtime/-/definition-runtime-3.0.0.tgz#11ce800d8b3bcd9e84f7500906b7708b79113e49"
-  integrity sha512-KLqp1xNADpKSTeFuzLKXlqycJ5OS4JnjPkFxuB1FXvJa0SKYm7X3IknRvN3KVO4QFC2+4xfKQMtX9eff9aMhWA==
+"@scale-codec/definition-runtime@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@scale-codec/definition-runtime/-/definition-runtime-4.0.1.tgz#c72a28edc4d6a381a8cad7051ba0fb7263b2b7e9"
+  integrity sha512-fu+zVJYB5qp6CXZofPNANsJQlb6jYYDNIuGnSPEyngP4u5rdN8bK0GUiOgXDJDtOtb1aeD8gRira1+YFHydpUw==
   dependencies:
-    "@scale-codec/core" "^2.0.0"
-    "@scale-codec/util" "^1.1.1"
+    "@scale-codec/core" "^2.0.1"
+    "@scale-codec/util" "^1.1.2"
     fmt-subs "^1.1.1"
-    type-fest "^3.5.5"
 
 "@scale-codec/enum@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@scale-codec/enum/-/enum-2.1.1.tgz#0b354fb641bdd7915a5feefe85aaef02cf78984a"
   integrity sha512-n5mTWxc4wbeIBn+HlIXjeU7PtzUAY1hqX3Y+BTd5OOCds83+DA/qB+bikKCDZ+NjDHBMZo1667vXudxjMTIW3g==
 
-"@scale-codec/util@^1.1.1", "@scale-codec/util@^1.1.2":
+"@scale-codec/util@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@scale-codec/util/-/util-1.1.2.tgz#747580dedeb3bf05fa62139c9252148338fdd0c6"
   integrity sha512-Aali9gWoI1vOUUwk2H1FktstiInl6x5rjrPd3Am/b1WJV603NEI9QcJ7UGM7Eh42UjLD9e6H7E1ZF0yFnlRUUQ==
@@ -3389,11 +3388,6 @@ type-fest@^0.21.3:
   version "0.21.3"
   resolved "https://registry.npmmirror.com/type-fest/-/type-fest-0.21.3.tgz#d260a24b0198436e133fa26a524a6d65fa3b2e37"
   integrity sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==
-
-type-fest@^3.5.5:
-  version "3.5.7"
-  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-3.5.7.tgz#1ee9efc9a172f4002c40b896689928a7bba537f2"
-  integrity sha512-6J4bYzb4sdkcLBty4XW7F18VPI66M4boXNE+CY40532oq2OJe6AVMB5NmjOp6skt/jw5mRjz/hLRpuglz0U+FA==
 
 type@^1.0.1:
   version "1.2.0"
