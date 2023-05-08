@@ -1407,15 +1407,6 @@
     "@polkadot/util" "^12.1.2"
     tslib "^2.5.0"
 
-"@polkadot/types-codec@10.4.1":
-  version "10.4.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/types-codec/-/types-codec-10.4.1.tgz#a69665e4d75e66cf25582078b9c041ce7b2ad77d"
-  integrity sha512-h6OCSF6i0b/Q4uCOEEiibMkGefhb7daaDGwoxjTEOeSqDE9gMIkhkyXVjqcOGbsHsFaYqYhuJakRQe/LICykTw==
-  dependencies:
-    "@polkadot/util" "^12.0.1"
-    "@polkadot/x-bigint" "^12.0.1"
-    tslib "^2.5.0"
-
 "@polkadot/types-codec@10.6.1":
   version "10.6.1"
   resolved "https://registry.yarnpkg.com/@polkadot/types-codec/-/types-codec-10.6.1.tgz#764b61aa3d448ac2136b2507166e7b3c26e2df36"
@@ -1484,7 +1475,7 @@
     "@scure/base" "1.1.1"
     tslib "^2.5.0"
 
-"@polkadot/util@12.1.2", "@polkadot/util@^12.0.1", "@polkadot/util@^12.1.2":
+"@polkadot/util@12.1.2", "@polkadot/util@^12.1.2":
   version "12.1.2"
   resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-12.1.2.tgz#3d54895a5bb6a4d59eb1d745e191224d3f0ed0b1"
   integrity sha512-Da8q+0WVWSuMMS3hLAwnIid8FKRGLmwhD69jikye47zeEXCtvp4e/bjD0YbINNKHoeIRsApchJtqmbaEoxXjIQ==
@@ -1558,14 +1549,6 @@
     "@polkadot/x-global" "12.1.2"
     tslib "^2.5.0"
 
-"@polkadot/x-bigint@^12.0.1":
-  version "12.0.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-bigint/-/x-bigint-12.0.1.tgz#4137741f05ce90b794f1becff38473ef49839b60"
-  integrity sha512-i93iVkK/PHsh1XDtYqdvUhuom6W80dYPCEA0WcZl0yuxuZGWk3Az+mXRL/mZkK/uDp8RGC0wYQiUm0kkheeoqg==
-  dependencies:
-    "@polkadot/x-global" "12.0.1"
-    tslib "^2.5.0"
-
 "@polkadot/x-fetch@^12.1.2":
   version "12.1.2"
   resolved "https://registry.yarnpkg.com/@polkadot/x-fetch/-/x-fetch-12.1.2.tgz#095673de3ab6bed0c790e496fba3f549fa56fe4d"
@@ -1573,13 +1556,6 @@
   dependencies:
     "@polkadot/x-global" "12.1.2"
     node-fetch "^3.3.1"
-    tslib "^2.5.0"
-
-"@polkadot/x-global@12.0.1":
-  version "12.0.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/x-global/-/x-global-12.0.1.tgz#80c22cbe37583d7fbf0376c3489eaccb391c42b1"
-  integrity sha512-kj/mMv7UPKIq5SnnnzICVOjhhYgUZzE8bT/az1D7z6OXV3SEH+4dmRsDEavwYinGMO7fi5fCvDayRu8r7ne2ZA==
-  dependencies:
     tslib "^2.5.0"
 
 "@polkadot/x-global@12.1.2", "@polkadot/x-global@^12.1.2":
