@@ -24,6 +24,6 @@
     "ffi-napi": "^4.0.3",
     "ref-array-di": "^1.2.2",
     "ref-struct-di": "^1.1.1",
-    "scale-ts": "^0.2.11"
+    "scale-ts": "^1.1.0"
   }
 }
