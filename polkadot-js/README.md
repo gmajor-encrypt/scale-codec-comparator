@@ -2,7 +2,7 @@
 
 ## Requirement
 
-1. nodejs >= 14
+1. nodejs >= 18
 2. npm
 
 
