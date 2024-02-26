@@ -11,17 +11,17 @@ Scale-codec-comarator provides the FFI function of the parity-scale-codec librar
 
 ### Comparator Result Badges
 
-[![scale-go-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-go.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-go.yml)
-[![scale-php-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-php.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-php.yml)
-[![scale-ruby-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ruby.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ruby.yml)
-[![scale-python-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-python.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-python.yml)
-[![scale-js-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-js.yml/badge.svg?branch=main)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-js.yml)
-[![go-substrate-rpc-client-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/go-substrate-rpc-client.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/go-substrate-rpc-client.yml)
-[![cScale-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/cScale.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/cScale.yml)
-[![scale-codec-js-library-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-js-library.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-js-library.yml)
-[![as-scale-codec-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/as-scale-codec.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/as-scale-codec.yml)
-[![scale-codec-cpp-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-cpp.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-cpp.yml)
-[![scale-ts-test](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ts.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ts.yml)
+[![scale.go](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-go.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-go.yml)
+[![php-scale-codec](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-php.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-php.yml)
+[![scale.rb](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ruby.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ruby.yml)
+[![py-scale-codec](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-python.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-python.yml)
+[![polkadot.js](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-js.yml/badge.svg?branch=main)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-js.yml)
+[![go-substrate-rpc-client](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/go-substrate-rpc-client.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/go-substrate-rpc-client.yml)
+[![cScale](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/cScale.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/cScale.yml)
+[![scale-codec-js-library](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-js-library.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-js-library.yml)
+[![as-scale-codec](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/as-scale-codec.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/as-scale-codec.yml)
+[![scale-codec-cpp](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-cpp.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-codec-cpp.yml)
+[![scale-ts](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ts.yml/badge.svg)](https://github.com/gmajor-encrypt/scale-codec-comparator/actions/workflows/scale-ts.yml)
 
 The tests of the following scale libraries have been completed
 
