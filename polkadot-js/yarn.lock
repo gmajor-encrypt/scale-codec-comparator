@@ -1455,15 +1455,6 @@
     "@polkadot/util" "^12.6.2"
     tslib "^2.6.2"
 
-"@polkadot/types-codec@10.12.2":
-  version "10.12.2"
-  resolved "https://registry.yarnpkg.com/@polkadot/types-codec/-/types-codec-10.12.2.tgz#a9b583998357e4f75d6983f962eea5c99056dfdd"
-  integrity sha512-9DHBVvixuc0CNTBANsxGFITWcpUxfL5whL0h/tUA3yL/kT5/3Rp3E+GgEOJhwFAwMRHlNY7ll4lA9K2h+leELQ==
-  dependencies:
-    "@polkadot/util" "^12.6.2"
-    "@polkadot/x-bigint" "^12.6.2"
-    tslib "^2.6.2"
-
 "@polkadot/types-codec@10.12.3":
   version "10.12.3"
   resolved "https://registry.yarnpkg.com/@polkadot/types-codec/-/types-codec-10.12.3.tgz#7da724fc09678f0a1133478ec35134cc1b0c4727"
