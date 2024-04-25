@@ -1464,10 +1464,10 @@
     "@polkadot/x-bigint" "^12.6.2"
     tslib "^2.6.2"
 
-"@polkadot/types-codec@11.0.1":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/types-codec/-/types-codec-11.0.1.tgz#56769d1667c7f211d116a12cd0cbb621b41b2dd2"
-  integrity sha512-kETfTzVEZIQadHRV2QaBc+s+FFiLQ5CCBByCQuo+KJz6S8I6Jz3dUfvyMv3RV58oquJqSDf6bEWo+fsTm7ATqQ==
+"@polkadot/types-codec@11.0.2":
+  version "11.0.2"
+  resolved "https://registry.yarnpkg.com/@polkadot/types-codec/-/types-codec-11.0.2.tgz#71e808592fbc538ef44f67585d2d83f07d581d5f"
+  integrity sha512-OL7jM9JNzmRo+gLNIWllvyv3I4k+2dywKchC9gw/D5OCkFD+B5T3oHUw99zzER0C/r7/vTH9RM3w79yeW0UYKA==
   dependencies:
     "@polkadot/util" "^12.6.2"
     "@polkadot/x-bigint" "^12.6.2"
