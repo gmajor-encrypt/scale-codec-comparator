@@ -21,7 +21,7 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
-    "@polkadot/api": "11.0.3",
+    "@polkadot/api": "11.2.1",
     "@polkadot/types-codec": "11.0.3",
     "ffi-napi": "^4.0.3",
     "ref-array-di": "^1.2.2",
