@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "376f6ac67d0a4937bd0c111eaa0395a6",
+    "content-hash": "9068c38629f7caf1931997676d5b6e36",
     "packages": [
         {
             "name": "bitwasp/buffertools",
@@ -58,16 +58,16 @@
         },
         {
             "name": "gmajor/substrate-codec-php",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gmajor-encrypt/php-scale-codec.git",
-                "reference": "912ea44bcc32c7bf1bcf13813efcc9b3c266712e"
+                "reference": "f2e16f06d945a8b2718004c2fe828512a22e875b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gmajor-encrypt/php-scale-codec/zipball/912ea44bcc32c7bf1bcf13813efcc9b3c266712e",
-                "reference": "912ea44bcc32c7bf1bcf13813efcc9b3c266712e",
+                "url": "https://api.github.com/repos/gmajor-encrypt/php-scale-codec/zipball/f2e16f06d945a8b2718004c2fe828512a22e875b",
+                "reference": "f2e16f06d945a8b2718004c2fe828512a22e875b",
                 "shasum": ""
             },
             "require": {
@@ -99,9 +99,9 @@
             ],
             "support": {
                 "issues": "https://github.com/gmajor-encrypt/php-scale-codec/issues",
-                "source": "https://github.com/gmajor-encrypt/php-scale-codec/tree/v1.0.1"
+                "source": "https://github.com/gmajor-encrypt/php-scale-codec/tree/v1.0.2"
             },
-            "time": "2023-01-19T01:02:16+00:00"
+            "time": "2023-10-26T08:46:32+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -109,27 +109,27 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/schmittjoh/php-option.git",
-                "reference": "00430c0532ae544fb1c81e45705b3d356bfc25d0"
+                "reference": "e3fac8b24f56113f7cb96af14958c0dd16330f54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/schmittjoh/php-option/zipball/00430c0532ae544fb1c81e45705b3d356bfc25d0",
-                "reference": "00430c0532ae544fb1c81e45705b3d356bfc25d0",
+                "url": "https://api.github.com/repos/schmittjoh/php-option/zipball/e3fac8b24f56113f7cb96af14958c0dd16330f54",
+                "reference": "e3fac8b24f56113f7cb96af14958c0dd16330f54",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2.5 || ^8.0"
             },
             "require-dev": {
-                "bamarni/composer-bin-plugin": "^1.8.1",
-                "phpunit/phpunit": "^8.5.30 || ^9.5.25"
+                "bamarni/composer-bin-plugin": "^1.8.2",
+                "phpunit/phpunit": "^8.5.39 || ^9.6.20 || ^10.5.28"
             },
             "default-branch": true,
             "type": "library",
             "extra": {
                 "bamarni-bin": {
                     "bin-links": true,
-                    "forward-command": true
+                    "forward-command": false
                 },
                 "branch-alias": {
                     "dev-master": "1.9-dev"
@@ -165,7 +165,7 @@
             ],
             "support": {
                 "issues": "https://github.com/schmittjoh/php-option/issues",
-                "source": "https://github.com/schmittjoh/php-option/tree/master"
+                "source": "https://github.com/schmittjoh/php-option/tree/1.9.3"
             },
             "funding": [
                 {
@@ -177,7 +177,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-10-15T20:52:05+00:00"
+            "time": "2024-07-20T21:41:07+00:00"
         }
     ],
     "packages-dev": [
@@ -2479,5 +2479,5 @@
         "php": ">=8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
