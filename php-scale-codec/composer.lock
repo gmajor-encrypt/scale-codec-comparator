@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cdc42c6750693f8faa3049f22a20ecb8",
+    "content-hash": "4a923a3891aa131291b08ce9ae3dec11",
     "packages": [
         {
             "name": "bitwasp/buffertools",
@@ -58,7 +58,7 @@
         },
         {
             "name": "gmajor/substrate-codec-php",
-            "version": "v1.1.0",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gmajor-encrypt/php-scale-codec.git",
@@ -99,7 +99,7 @@
             ],
             "support": {
                 "issues": "https://github.com/gmajor-encrypt/php-scale-codec/issues",
-                "source": "https://github.com/gmajor-encrypt/php-scale-codec/tree/v1.1.0"
+                "source": "https://github.com/gmajor-encrypt/php-scale-codec/tree/v1.1.1"
             },
             "time": "2024-08-05T07:15:34+00:00"
         },
