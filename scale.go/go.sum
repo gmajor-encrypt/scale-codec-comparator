@@ -4,8 +4,8 @@ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSs
 github.com/huandu/xstrings v1.3.1/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
 github.com/huandu/xstrings v1.3.2 h1:L18LIDzqlW6xN2rEkpdV8+oL/IXWJ1APd+vsdYy4Wdw=
 github.com/huandu/xstrings v1.3.2/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
-github.com/itering/scale.go v1.9.11 h1:RR5Huqo0+9VJoGwRCAF3JYxiXwBmkt+9lUAomsWLR5I=
-github.com/itering/scale.go v1.9.11/go.mod h1:fD+Qvoum94NYhsIwW4sR5tawE3skS9iA/Y3rffkHtE8=
+github.com/itering/scale.go v1.9.13 h1:AWIT5IDW+deCz1BApjoNzxVJhjn7TgHkdtSy6hvs2iU=
+github.com/itering/scale.go v1.9.13/go.mod h1:fD+Qvoum94NYhsIwW4sR5tawE3skS9iA/Y3rffkHtE8=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/shopspring/decimal v1.2.0/go.mod h1:DKyhrW/HYNuLGql+MJL6WCR6knT2jwCFRcu2hWCYk4o=
