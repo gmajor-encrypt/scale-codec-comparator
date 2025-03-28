@@ -1466,6 +1466,15 @@
     "@polkadot/x-bigint" "^13.4.3"
     tslib "^2.8.1"
 
+"@polkadot/types-codec@15.9.1":
+  version "15.9.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/types-codec/-/types-codec-15.9.1.tgz#88f7ea64636e121ca57b60d16c918df1ac2be64f"
+  integrity sha512-HtfbTSRualmOZQnil2+8Ff6OHJXv67ndN8f92+cbL1VhnesKbbgDK3TE64YqKlZfZkOTNy4q/2a1P9E1LTCBNA==
+  dependencies:
+    "@polkadot/util" "^13.4.3"
+    "@polkadot/x-bigint" "^13.4.3"
+    tslib "^2.8.1"
+
 "@polkadot/types-create@15.8.1":
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/@polkadot/types-create/-/types-create-15.8.1.tgz#cb2b78459b4c77fecdc2e10001462f973cbbfa95"
