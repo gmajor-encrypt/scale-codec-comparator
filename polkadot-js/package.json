@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@polkadot/api": "16.2.1",
-    "@polkadot/types-codec": "16.2.1",
+    "@polkadot/types-codec": "16.4.1",
     "ffi-napi": "^4.0.3",
     "ref-array-di": "^1.2.2",
     "ref-struct-di": "^1.1.1"
