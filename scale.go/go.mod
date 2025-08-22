@@ -3,7 +3,7 @@ module github.com/gmajor-encrypt/scale-codec-comparator
 go 1.21
 
 require (
-	github.com/itering/scale.go v1.9.23
+	github.com/itering/scale.go v1.10.0
 	github.com/stretchr/testify v1.8.0
 )
 
